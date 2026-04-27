@@ -8,64 +8,66 @@ import {
 const PATENT_DATA = {
   total: 480,
   categoryData: [
-    { name: "Sensing Modality", count: 149, fill: "#00D4FF" },
-    { name: "Tissue / Anatomical Target", count: 102, fill: "#7C3AED" },
-    { name: "Data / Computational Framework", count: 81, fill: "#10B981" },
-    { name: "Ablation Energy Modality", count: 68, fill: "#F59E0B" },
+    { name: "Sensing Modality", count: 642, fill: "#00D4FF" },
+    { name: "Tissue / Anatomical Target", count: 406, fill: "#7C3AED" },
+    { name: "Data / Computational Framework", count: 325, fill: "#10B981" },
+    { name: "Ablation Energy Modality", count: 350, fill: "#F59E0B" },
   ],
   subcatData: {
     "Sensing Modality": [
-      { name: "Electrical / Impedance", count: 50 },
-      { name: "Thermal / Infrared", count: 33 },
-      { name: "Optical / Photonic", count: 19 },
-      { name: "Ultrasound / Acoustic", count: 19 },
-      { name: "Imaging Based", count: 19 },
-      { name: "Mechanical / Contact Force", count: 6 },
-      { name: "Photoacoustic", count: 3 },
+      { name: "Electrical / Impedance", count: 203 },
+      { name: "Thermal / Infrared", count: 164 },
+      { name: "Optical / Photonic", count: 76 },
+      { name: "Ultrasound / Acoustic", count: 74 },
+      { name: "Imaging Based", count: 80 },
+      { name: "Mechanical / Contact Force", count: 27 },
+      { name: "Photoacoustic", count: 11 },
+      { name: "Chemical / Biochemical", count: 2 },
     ],
     "Ablation Energy Modality": [
-      { name: "Pulsed Electric Field (PEF)", count: 23 },
-      { name: "Laser Ablation", count: 15 },
-      { name: "Radiofrequency (RF) Ablation", count: 12 },
-      { name: "Microwave Ablation", count: 10 },
-      { name: "Ultrasound Ablation (HIFU)", count: 6 },
-      { name: "Cryoablation", count: 2 },
-    ],
+  { name: "Pulsed Electric Field (PEF)", count: 98 },
+  { name: "Radiofrequency (RF) Ablation", count: 80 },
+  { name: "Laser Ablation", count: 58 },
+  { name: "Microwave Ablation", count: 43 },
+  { name: "Cryoablation", count: 35 },
+  { name: "Ultrasound Ablation (HIFU)", count: 34 },
+  { name: "Phototherapy / Photothermal", count: 2 },
+],
     "Data / Computational Framework": [
-      { name: "Statistical / Empirical Models", count: 26 },
-      { name: "Image Processing Algorithms", count: 18 },
-      { name: "AI / ML", count: 14 },
-      { name: "Signal Processing Algorithms", count: 13 },
-      { name: "Multimodal Data Fusion", count: 10 },
-    ],
+  { name: "Statistical / Empirical Models", count: 112 },
+  { name: "Image Processing Algorithms", count: 84 },
+  { name: "AI / ML", count: 60 },
+  { name: "Signal Processing Algorithms", count: 38 },
+  { name: "Multimodal Data Fusion", count: 31 },
+],
     "Tissue / Anatomical Target": [
-      { name: "Other / Non-Specific", count: 38 },
-      { name: "Oncology / Tumor", count: 28 },
-      { name: "Cardiac", count: 24 },
-      { name: "Neurological / Nerve", count: 6 },
-      { name: "Pulmonary / Airway", count: 3 },
-      { name: "Gastrointestinal", count: 2 },
-      { name: "Renal / Perirenal", count: 1 },
-    ],
+  { name: "Other / Non-Specific", count: 161 },
+  { name: "Cardiac", count: 91 },
+  { name: "Oncology / Tumor", count: 82 },
+  { name: "Neurological / Nerve", count: 24 },
+  { name: "Renal / Perirenal", count: 23 },
+  { name: "Pulmonary / Airway", count: 14 },
+  { name: "Gastrointestinal", count: 11 },
+],
   },
   filingTrend: [
-    { year: "2020", count: 10 },
-    { year: "2021", count: 79 },
-    { year: "2022", count: 103 },
-    { year: "2023", count: 79 },
-    { year: "2024", count: 105 },
-    { year: "2025", count: 104 },
+    { year: "2020", count: 9 },
+    { year: "2021", count: 71 },
+    { year: "2022", count: 88 },
+    { year: "2023", count: 74 },
+    { year: "2024", count: 91 },
+    { year: "2025", count: 90 },
   ],
   geoData: [
-    { country: "China", code: "CN", count: 260, flag: "🇨🇳", fill: "#EF4444" },
-    { country: "PCT / International", code: "WO", count: 80, flag: "🌐", fill: "#6366F1" },
-    { country: "United States", code: "US", count: 72, flag: "🇺🇸", fill: "#3B82F6" },
-    { country: "Europe", code: "EP", count: 26, flag: "🇪🇺", fill: "#10B981" },
-    { country: "Japan", code: "JP", count: 20, flag: "🇯🇵", fill: "#F59E0B" },
-    { country: "India", code: "IN", count: 8, flag: "🇮🇳", fill: "#FF6B35" },
-    { country: "Germany", code: "DE", count: 7, flag: "🇩🇪", fill: "#8B5CF6" },
-    { country: "South Korea", code: "KR", count: 5, flag: "🇰🇷", fill: "#06B6D4" },
-    { country: "France", code: "FR", count: 1, flag: "🇫🇷", fill: "#EC4899" },
+    { country: "China", code: "CN", count: 312, flag: "🇨🇳", fill: "#EF4444" },
+    { country: "PCT / International", code: "WO", count: 102, flag: "🌐", fill: "#6366F1" },
+    { country: "United States", code: "US", count: 86, flag: "🇺🇸", fill: "#3B82F6" },
+    { country: "Europe", code: "EP", count: 34, flag: "🇪🇺", fill: "#10B981" },
+    { country: "Japan", code: "JP", count: 31, flag: "🇯🇵", fill: "#F59E0B" },
+    { country: "India", code: "IN", count: 11, flag: "🇮🇳", fill: "#FF6B35" },
+    { country: "Germany", code: "DE", count: 9, flag: "🇩🇪", fill: "#8B5CF6" },
+    { country: "South Korea", code: "KR", count: 6, flag: "🇰🇷", fill: "#06B6D4" },
+    { country: "France", code: "FR", count: 2, flag: "🇫🇷", fill: "#EC4899" },
   ],
   assigneeData: [
     { name: "Chinese MedTech Company", count: 127, fill: "#EF4444" },
@@ -495,54 +497,207 @@ const Dashboard = ({ user }) => {
   const [activeChart, setActiveChart] = useState(0);
   const [showChat, setShowChat] = useState(false);
   return (
-    <div style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      <header style={{
-        position: "sticky", top: 0, zIndex: 50, borderBottom: `1px solid ${C.border}`,
-        background: "rgba(7,12,26,0.95)", backdropFilter: "blur(20px)",
-        padding: "0 28px", display: "flex", alignItems: "center", height: 64,
-      }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: C.bg,
+        color: C.text,
+        fontFamily: "system-ui, -apple-system, sans-serif",
+      }}
+    >
+      <header
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 50,
+          borderBottom: `1px solid ${C.border}`,
+          background: "rgba(7,12,26,0.95)",
+          backdropFilter: "blur(20px)",
+          padding: "0 28px",
+          display: "flex",
+          alignItems: "center",
+          height: 64,
+        }}
+      >
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ width: 40, height: 40, borderRadius: 10, background: `linear-gradient(135deg, ${C.accent}, ${C.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 800, color: "#fff" }}>B</div>
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 10,
+              background: `linear-gradient(135deg, ${C.accent}, ${C.accent2})`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 18,
+              fontWeight: 800,
+              color: "#fff",
+            }}
+          >
+            B
+          </div>
           <div>
-            <div style={{ fontSize: 17, fontWeight: 700, color: C.text }}>Bayslope Technologies</div>
-            <div style={{ fontSize: 10, color: C.muted, letterSpacing: "1.5px", textTransform: "uppercase" }}>Patent Intelligence Platform</div>
+            <div style={{ fontSize: 17, fontWeight: 700, color: C.text }}>
+              Bayslope Technologies
+            </div>
+            <div
+              style={{
+                fontSize: 10,
+                color: C.muted,
+                letterSpacing: "1.5px",
+                textTransform: "uppercase",
+              }}
+            >
+              Patent Intelligence Platform
+            </div>
           </div>
         </div>
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 16 }}>
+        <div
+          style={{
+            marginLeft: "auto",
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+          }}
+        >
           <div style={{ display: "flex", gap: 6 }}>
-            {[{ v: "480", l: "Patents" }, { v: "4", l: "Categories" }, { v: "9", l: "Geographies" }].map((s, i) => (
-              <div key={i} style={{ textAlign: "center", padding: "4px 14px", background: C.surface, borderRadius: 8, border: `1px solid ${C.border}` }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: C.accent }}>{s.v}</div>
-                <div style={{ fontSize: 9, color: C.muted, textTransform: "uppercase", letterSpacing: "0.5px" }}>{s.l}</div>
+            {[
+              { v: "480", l: "Patents" },
+              { v: "4", l: "Categories" },
+              { v: "9", l: "Geographies" },
+            ].map((s, i) => (
+              <div
+                key={i}
+                style={{
+                  textAlign: "center",
+                  padding: "4px 14px",
+                  background: C.surface,
+                  borderRadius: 8,
+                  border: `1px solid ${C.border}`,
+                }}
+              >
+                <div style={{ fontSize: 15, fontWeight: 700, color: C.accent }}>
+                  {s.v}
+                </div>
+                <div
+                  style={{
+                    fontSize: 9,
+                    color: C.muted,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                  }}
+                >
+                  {s.l}
+                </div>
               </div>
             ))}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 14px", background: C.surface, borderRadius: 20, border: `1px solid ${C.border}` }}>
-            <div style={{ width: 28, height: 28, borderRadius: "50%", background: `linear-gradient(135deg, ${C.accent}, ${C.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#fff" }}>{user[0].toUpperCase()}</div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "6px 14px",
+              background: C.surface,
+              borderRadius: 20,
+              border: `1px solid ${C.border}`,
+            }}
+          >
+            <div
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: "50%",
+                background: `linear-gradient(135deg, ${C.accent}, ${C.accent2})`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 12,
+                fontWeight: 700,
+                color: "#fff",
+              }}
+            >
+              {user[0].toUpperCase()}
+            </div>
             <span style={{ fontSize: 12, color: C.text }}>{user}</span>
           </div>
         </div>
       </header>
 
       <div style={{ display: "flex", height: "calc(100vh - 64px)" }}>
-        <aside style={{ width: 200, flexShrink: 0, borderRight: `1px solid ${C.border}`, padding: "20px 12px", display: "flex", flexDirection: "column", gap: 4, background: "rgba(255,255,255,0.01)" }}>
-          <div style={{ fontSize: 10, color: C.muted, letterSpacing: "1.2px", textTransform: "uppercase", padding: "0 8px", marginBottom: 8 }}>Visualizations</div>
-          {CHARTS.map(c => (
-            <button key={c.id} onClick={() => setActiveChart(c.id)}
+        <aside
+          style={{
+            width: 200,
+            flexShrink: 0,
+            borderRight: `1px solid ${C.border}`,
+            padding: "20px 12px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+            background: "rgba(255,255,255,0.01)",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 10,
+              color: C.muted,
+              letterSpacing: "1.2px",
+              textTransform: "uppercase",
+              padding: "0 8px",
+              marginBottom: 8,
+            }}
+          >
+            Visualizations
+          </div>
+          {CHARTS.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setActiveChart(c.id)}
               style={{
-                display: "flex", alignItems: "center", gap: 10, padding: "11px 12px",
-                borderRadius: 10, border: "none", cursor: "pointer", textAlign: "left",
-                background: activeChart === c.id ? `linear-gradient(135deg, ${C.accent}22, ${C.accent2}11)` : "transparent",
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "11px 12px",
+                borderRadius: 10,
+                border: "none",
+                cursor: "pointer",
+                textAlign: "left",
+                background:
+                  activeChart === c.id
+                    ? `linear-gradient(135deg, ${C.accent}22, ${C.accent2}11)`
+                    : "transparent",
                 color: activeChart === c.id ? C.accent : C.muted,
-                borderLeft: activeChart === c.id ? `3px solid ${C.accent}` : "3px solid transparent",
-                transition: "all 0.15s", fontSize: 13, fontWeight: activeChart === c.id ? 600 : 400,
-              }}>
-              <span>{c.icon}</span><span>{c.label}</span>
+                borderLeft:
+                  activeChart === c.id
+                    ? `3px solid ${C.accent}`
+                    : "3px solid transparent",
+                transition: "all 0.15s",
+                fontSize: 13,
+                fontWeight: activeChart === c.id ? 600 : 400,
+              }}
+            >
+              <span>{c.icon}</span>
+              <span>{c.label}</span>
             </button>
           ))}
           <div style={{ marginTop: "auto", padding: "12px 8px" }}>
-            <button onClick={() => setShowChat(s => !s)}
-              style={{ width: "100%", padding: "11px 14px", borderRadius: 12, border: `1px solid ${C.accent}44`, background: showChat ? `${C.accent}22` : "transparent", color: C.accent, cursor: "pointer", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}>
+            <button
+              onClick={() => setShowChat((s) => !s)}
+              style={{
+                width: "100%",
+                padding: "11px 14px",
+                borderRadius: 12,
+                border: `1px solid ${C.accent}44`,
+                background: showChat ? `${C.accent}22` : "transparent",
+                color: C.accent,
+                cursor: "pointer",
+                fontSize: 13,
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
               <span>💬</span> AI Chat
             </button>
           </div>
@@ -550,14 +705,62 @@ const Dashboard = ({ user }) => {
 
         <main style={{ flex: 1, overflowY: "auto", padding: "28px 32px" }}>
           <div style={{ maxWidth: 900, margin: "0 auto" }}>
-            <div style={{ marginBottom: 24, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div
+              style={{
+                marginBottom: 24,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
               <div>
-                <div style={{ fontSize: 22, fontWeight: 700, color: C.text }}>{CHARTS[activeChart].label}</div>
-                <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>Medical Device Patent Intelligence · Ablation & Sensing Technologies</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: C.text }}>
+                  {CHARTS[activeChart].label}
+                </div>
+                <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>
+                  Medical Device Patent Intelligence · Ablation & Sensing
+                  Technologies
+                </div>
               </div>
-              <div style={{ fontSize: 11, color: C.muted, padding: "6px 14px", background: C.surface, borderRadius: 20, border: `1px solid ${C.border}` }}>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: C.muted,
+                  padding: "6px 14px",
+                  background: C.surface,
+                  borderRadius: 20,
+                  border: `1px solid ${C.border}`,
+                }}
+              >
                 📁 Patent_tagging_RNR_WIP-23.xlsx
               </div>
+              <button 
+                onClick={() => window.open("/data", "_blank")}
+                style={{ 
+                  background: "rgba(255,255,255,0.05)", 
+                  border: `1px solid ${C.border}`, 
+                  color: C.text, 
+                  padding: "8px 16px", 
+                  borderRadius: 20, 
+                  fontSize: 11, 
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  transition: "all 0.2s"
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.1)";
+                  e.currentTarget.style.borderColor = C.accent;
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+                  e.currentTarget.style.borderColor = C.border;
+                }}
+              >
+                📋 View Full Data
+              </button>
             </div>
             {CHARTS[activeChart].component}
           </div>
