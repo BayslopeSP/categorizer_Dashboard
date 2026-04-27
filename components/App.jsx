@@ -6,7 +6,7 @@ import {
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const PATENT_DATA = {
-  total: 480,
+  total: 423,
   categoryData: [
     { name: "Sensing Modality", count: 642, fill: "#00D4FF" },
     { name: "Tissue / Anatomical Target", count: 406, fill: "#7C3AED" },
@@ -109,24 +109,10 @@ const PATENT_DATA = {
   ],
 };
 
-const CHAT_CONTEXT = `You are a patent intelligence analyst for Bayslope Technologies. You have deep knowledge of 480 medical device/ablation therapy patents analyzed and tagged with a custom taxonomy. Answer questions about this patent dataset accurately and concisely.
-
-KEY DATASET FACTS:
-- Total Patents: 480
-- Filing Years: 2020–2025 (peak in 2024 with 105 patents)
-- Top Geography: China (260 patents, 54%), then PCT/International (80), US (72), Europe (26), Japan (20)
-
-TAXONOMY:
-- Sensing Modality: 149 patents [Electrical/Impedance: 50, Thermal/IR: 33, Optical: 19, Ultrasound: 19, Imaging: 19, Mechanical: 6, Photoacoustic: 3]
-- Tissue/Anatomical Target: 102 patents [Other/Non-Specific: 38, Oncology/Tumor: 28, Cardiac: 24, Neurological: 6, Pulmonary: 3, GI: 2, Renal: 1]
-- Data/Computational Framework: 81 patents [Statistical Models: 26, Image Processing: 18, AI/ML: 14, Signal Processing: 13, Multimodal Fusion: 10]
-- Ablation Energy Modality: 68 patents [PEF/Electroporation: 23, Laser: 15, RF Ablation: 12, Microwave: 10, HIFU: 6, Cryoablation: 2]
-
-ASSIGNEE TYPES: Chinese MedTech Companies (127), Startups/SMEs (125), Research/Academic (74), Large MedTech Corporations (59), Hospital/Clinical (36), Other (23)
-
-FILING TREND: 10 (2020) → 79 (2021) → 103 (2022) → 79 (2023) → 105 (2024) → 104 (2025)
-
-Answer only questions related to this patent dataset. Be precise and reference specific numbers.`;
+const CHAT_CONTEXT = `You are a patent intelligence analyst for Bayslope Technologies.
+Your ONLY source of truth is the DYNAMIC DATASET SUMMARY and FULL PATENT LIST provided below. 
+Do not use any hardcoded numbers from previous versions. 
+If the user asks for counts, calculate them based on the FULL PATENT LIST provided in the context.`;
 
 // ─── THEME ───────────────────────────────────────────────────────────────────
 const C = {
@@ -170,34 +156,44 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 // ─── CHARTS ──────────────────────────────────────────────────────────────────
-const Chart1_Category = () => (
-  <Card>
-    <ChartTitle title="Patent Count by Category" subtitle="480 patents tagged across 4 primary taxonomy categories" />
-    <ResponsiveContainer width="100%" height={280}>
-      <BarChart data={PATENT_DATA.categoryData} layout="vertical" margin={{ left: 20, right: 30 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke={C.grid} horizontal={false} />
-        <XAxis type="number" tick={{ fill: C.muted, fontSize: 11 }} tickLine={false} axisLine={false} />
-        <YAxis dataKey="name" type="category" width={200} tick={{ fill: C.text, fontSize: 12 }} tickLine={false} axisLine={false} />
-        <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
-        <Bar dataKey="count" name="Patents" radius={[0, 8, 8, 0]} barSize={36}>
-          {PATENT_DATA.categoryData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
-    <div style={{ display: "flex", gap: 12, marginTop: 16, flexWrap: "wrap" }}>
-      {PATENT_DATA.categoryData.map((d, i) => (
-        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div style={{ width: 10, height: 10, borderRadius: "50%", background: d.fill }} />
-          <span style={{ fontSize: 11, color: C.muted }}>{d.name.split("/")[0].trim()} ({d.count})</span>
-        </div>
-      ))}
-    </div>
-  </Card>
-);
+const Chart1_Category = ({ data }) => {
+  const chartData = data?.categoryData || PATENT_DATA.categoryData;
+  const total = data?.total || PATENT_DATA.total;
+  return (
+    <Card>
+      <ChartTitle title="Patent Count by Category" subtitle={`${total} patents tagged across 4 primary taxonomy categories`} />
+      <ResponsiveContainer width="100%" height={280}>
+        <BarChart data={chartData} layout="vertical" margin={{ left: 20, right: 30 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke={C.grid} horizontal={false} />
+          <XAxis type="number" tick={{ fill: C.muted, fontSize: 11 }} tickLine={false} axisLine={false} />
+          <YAxis dataKey="name" type="category" width={200} tick={{ fill: C.text, fontSize: 12 }} tickLine={false} axisLine={false} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
+          <Bar dataKey="count" name="Patents" radius={[0, 8, 8, 0]} barSize={36}>
+            {chartData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+      <div style={{ display: "flex", gap: 12, marginTop: 16, flexWrap: "wrap" }}>
+        {chartData.map((d, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ width: 10, height: 10, borderRadius: "50%", background: d.fill }} />
+            <span style={{ fontSize: 11, color: C.muted }}>{d.name}: <span style={{ color: C.text, fontWeight: 600 }}>{d.count}</span></span>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+};
 
-const Chart2_Subcategory = () => {
-  const cats = Object.keys(PATENT_DATA.subcatData);
-  const [selected, setSelected] = useState(cats[0]);
+const Chart2_Subcategory = ({ data }) => {
+  const subcatData = data?.subcatData || PATENT_DATA.subcatData;
+  const cats = Object.keys(subcatData);
+  const [selected, setSelected] = useState(cats[0] || "");
+  
+  useEffect(() => {
+    if (cats.length > 0 && !selected) setSelected(cats[0]);
+  }, [cats]);
+
   return (
     <Card>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
@@ -211,13 +207,13 @@ const Chart2_Subcategory = () => {
         </select>
       </div>
       <ResponsiveContainer width="100%" height={280}>
-        <BarChart data={PATENT_DATA.subcatData[selected]} layout="vertical" margin={{ left: 10, right: 30 }}>
+        <BarChart data={subcatData[selected] || []} layout="vertical" margin={{ left: 10, right: 30 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={C.grid} horizontal={false} />
           <XAxis type="number" tick={{ fill: C.muted, fontSize: 11 }} tickLine={false} axisLine={false} />
           <YAxis dataKey="name" type="category" width={210} tick={{ fill: C.text, fontSize: 11 }} tickLine={false} axisLine={false} />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
           <Bar dataKey="count" name="Patents" radius={[0, 8, 8, 0]} barSize={28}>
-            {PATENT_DATA.subcatData[selected].map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
+            {(subcatData[selected] || []).map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
@@ -225,33 +221,38 @@ const Chart2_Subcategory = () => {
   );
 };
 
-const Chart3_FilingTrend = () => (
-  <Card>
-    <ChartTitle title="Filing Trend Over Time" subtitle="Number of patents filed per year (2020–2025)" />
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={PATENT_DATA.filingTrend} margin={{ left: 0, right: 20 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke={C.grid} />
-        <XAxis dataKey="year" tick={{ fill: C.muted, fontSize: 12 }} tickLine={false} axisLine={false} />
-        <YAxis tick={{ fill: C.muted, fontSize: 11 }} tickLine={false} axisLine={false} />
-        <Tooltip content={<CustomTooltip />} />
-        <Line
-          type="monotone" dataKey="count" name="Patents Filed"
-          stroke={C.accent} strokeWidth={3}
-          dot={{ fill: C.accent, r: 6, strokeWidth: 2, stroke: C.bg }}
-          activeDot={{ r: 8, fill: "#fff", stroke: C.accent, strokeWidth: 2 }}
-        />
-      </LineChart>
-    </ResponsiveContainer>
-    <div style={{ display: "flex", gap: 24, marginTop: 16, flexWrap: "wrap" }}>
-      {[{ label: "Peak Year", val: "2024 (105)" }, { label: "2025 YTD", val: "104" }, { label: "Total", val: "480 Patents" }, { label: "Growth 21→24", val: "+33%" }].map((s, i) => (
-        <div key={i}>
-          <div style={{ fontSize: 11, color: C.muted }}>{s.label}</div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: C.accent }}>{s.val}</div>
-        </div>
-      ))}
-    </div>
-  </Card>
-);
+const Chart3_FilingTrend = ({ data }) => {
+  const filingTrend = data?.filingTrend || PATENT_DATA.filingTrend;
+  const total = data?.total || PATENT_DATA.total;
+  return (
+    <Card>
+      <ChartTitle title="Filing Trend Over Time" subtitle={`Number of patents filed per year (${filingTrend[0]?.year || '2020'}–${filingTrend[filingTrend.length-1]?.year || '2025'})`} />
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={filingTrend} margin={{ left: 0, right: 20 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke={C.grid} />
+          <XAxis dataKey="year" tick={{ fill: C.muted, fontSize: 12 }} tickLine={false} axisLine={false} />
+          <YAxis tick={{ fill: C.muted, fontSize: 11 }} tickLine={false} axisLine={false} />
+          <Tooltip content={<CustomTooltip />} />
+          <Line
+            type="monotone" dataKey="count" name="Patents Filed"
+            stroke={C.accent} strokeWidth={3}
+            dot={{ fill: C.accent, r: 6, strokeWidth: 2, stroke: C.bg }}
+            activeDot={{ r: 8, fill: "#fff", stroke: C.accent, strokeWidth: 2 }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+      <div style={{ display: "flex", gap: 24, marginTop: 16, flexWrap: "wrap" }}>
+        {[{ label: "Total", val: `${total} Patents` }].map((s, i) => (
+          <div key={i}>
+            <div style={{ fontSize: 11, color: C.muted }}>{s.label}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: C.accent }}>{s.val}</div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+};
+
 
 const Chart4_Geography = () => {
   const total = PATENT_DATA.geoData.reduce((a, b) => a + b.count, 0);
@@ -290,7 +291,7 @@ const Chart4_Geography = () => {
 
 const Chart5_Taxonomy = () => (
   <Card>
-    <ChartTitle title="Patent Taxonomy — Categories & Sub-Categories" subtitle="Structural map of the classification framework used across all 480 patents" />
+    <ChartTitle title="Patent Taxonomy — Categories & Sub-Categories" subtitle="Structural map of the classification framework used across all 423 patents" />
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       {PATENT_DATA.taxonomyMap.map((cat, ci) => (
         <div key={ci} style={{ display: "flex", gap: 0, alignItems: "stretch" }}>
@@ -329,7 +330,7 @@ const Chart5_Taxonomy = () => (
     <div style={{ marginTop: 16, padding: "10px 16px", background: "rgba(255,255,255,0.02)", borderRadius: 10, border: `1px solid ${C.border}`, display: "flex", gap: 20, flexWrap: "wrap" }}>
       <span style={{ fontSize: 11, color: C.muted }}>📋 4 top-level categories</span>
       <span style={{ fontSize: 11, color: C.muted }}>🏷️ 31 sub-categories total</span>
-      <span style={{ fontSize: 11, color: C.muted }}>📄 480 patents tagged</span>
+      <span style={{ fontSize: 11, color: C.muted }}>📄 423 patents tagged</span>
     </div>
   </Card>
 );
@@ -368,7 +369,7 @@ const Chart6_Assignee = () => {
 };
 
 // ─── CHATBOT ─────────────────────────────────────────────────────────────────
-const Chatbot = ({ onClose }) => {
+const Chatbot = ({ dynamicStats, cleanRows, allColumns, mapping, onClose }) => {
   const [messages, setMessages] = useState([
     { role: "assistant", content: "Hi! I'm your Patent Intelligence Assistant. Ask me anything about this dataset — categories, filing trends, geographies, assignees, or specific technologies." }
   ]);
@@ -386,22 +387,64 @@ const Chatbot = ({ onClose }) => {
     setLoading(true);
     try {
       const history = messages.map(m => ({ role: m.role, content: m.content }));
-      // ✅ FIX: routes through /api/chat proxy — API key stays server-side
-      const response = await fetch("/api/chat", {
+      
+      // Create a condensed list of all patents for the AI to reference
+      const patentList = cleanRows.map(r => 
+        `- ${r["Publication Number"]}: ${r["Title"]} [Categories: ${allColumns.filter(c => r[c] === 1 || r[c] === "1" || r[c] === "R").join(", ")}]`
+      ).join("\n");
+
+      // Calculate a complete breakdown of every sub-category count for the AI
+      let taxonomyBreakdown = "";
+      if (dynamicStats && mapping) {
+        dynamicStats.categoryData.forEach(cat => {
+          taxonomyBreakdown += `\nCATEGORY: ${cat.name} (Total Tags: ${cat.count})\n`;
+          const subs = Object.keys(mapping).filter(sub => mapping[sub] === cat.name);
+          subs.forEach(sub => {
+            const count = cleanRows.filter(r => r[sub] === 1 || r[sub] === "1" || r[sub] === "R").length;
+            taxonomyBreakdown += `- ${sub}: ${count} patents\n`;
+          });
+        });
+      }
+
+      const summary = `
+        OFFICIAL DATASET STATISTICS (USE THESE EXACT NUMBERS):
+        - Total Unique Patents: ${dynamicStats?.total || 0}
+        
+        CATEGORY TAG COUNTS (Sum of all sub-categories):
+        ${taxonomyBreakdown}
+        
+        FULL PATENT LIST (Reference these for specific numbers/titles):
+        ${patentList}
+
+        INSTRUCTIONS:
+        1. When a user asks for "How many patents in Sensing Modality?", ALWAYS give the "Total Tags" number (e.g., 642).
+        2. If they ask for "Total patents in the dataset", give the "Total Unique Patents" (e.g., 418).
+        3. If they ask for a LIST or "Show me these patents", use the FULL PATENT LIST provided above to list the Publication Numbers and Titles.
+        4. Do NOT say you cannot provide lists. You HAVE the data.
+      `;
+
+      const chatResponse = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "gpt-4o-mini",
           max_tokens: 1000,
-          system: CHAT_CONTEXT,
+          system: summary + "\n" + CHAT_CONTEXT,
           messages: [...history, { role: "user", content: userMsg }],
         }),
       });
-      const data = await response.json();
-      const reply = data.content?.[0]?.text || "I couldn't process that. Please try again.";
+
+      if (!chatResponse.ok) {
+        const errData = await chatResponse.json().catch(() => ({ error: "Server error" }));
+        throw new Error(errData.error || "Connection error");
+      }
+
+      const chatData = await chatResponse.json();
+      const reply = chatData.content?.[0]?.text || "I couldn't process that. Please try again.";
       setMessages(prev => [...prev, { role: "assistant", content: reply }]);
-    } catch {
-      setMessages(prev => [...prev, { role: "assistant", content: "Connection error. Please try again." }]);
+    } catch (err) {
+      console.error("Chat error:", err);
+      setMessages(prev => [...prev, { role: "assistant", content: err.message || "Connection error. Please try again." }]);
     }
     setLoading(false);
   }, [input, loading, messages]);
@@ -491,11 +534,105 @@ const CHARTS = [
   { id: 3, label: "Geography",      icon: "🌍", component: <Chart4_Geography /> },
   { id: 4, label: "Taxonomy Map",   icon: "🗺️", component: <Chart5_Taxonomy /> },
   { id: 5, label: "Assignees",      icon: "🏢", component: <Chart6_Assignee /> },
+  { id: 6, label: "Master Data",    icon: "📊", component: null },
 ];
 
 const Dashboard = ({ user }) => {
   const [activeChart, setActiveChart] = useState(0);
   const [showChat, setShowChat] = useState(false);
+  const [rows, setRows] = useState([]);
+  const [mapping, setMapping] = useState({});
+  const [search, setSearch] = useState("");
+  const [selectedCell, setSelectedCell] = useState(null);
+  const [dynamicStats, setDynamicStats] = useState(null);
+
+  useEffect(() => {
+    fetch("/data.json")
+      .then(res => res.json())
+      .then(resData => {
+        const rawData = resData.data || [];
+        const map = resData.mapping || {};
+        setRows(rawData);
+        setMapping(map);
+
+        // Calculate dynamic stats for charts
+        const categories = [...new Set(Object.values(map))];
+        
+        // Calculate sub-category counts
+        const subcatData = {};
+        categories.forEach(cat => {
+          const subs = Object.keys(map).filter(sub => map[sub] === cat);
+          subcatData[cat] = subs.map(sub => ({
+            name: sub,
+            count: rawData.filter(r => r[sub] === 1 || r[sub] === "1" || r[sub] === "R").length
+          })).sort((a, b) => b.count - a.count);
+        });
+
+        // Category count = Sum of sub-category tags (ensures 642 for Sensing Modality)
+        const categoryData = categories.map(cat => ({
+          name: cat,
+          count: subcatData[cat].reduce((sum, s) => sum + s.count, 0),
+          fill: cat.includes("Sensing") ? "#00D4FF" : cat.includes("Tissue") ? "#7C3AED" : cat.includes("Data") ? "#10B981" : "#F59E0B"
+        })).sort((a, b) => b.count - a.count);
+
+        const years = [...new Set(rawData.map(r => r["Filing Year"]))].filter(Boolean).sort();
+        const filingTrend = years.map(y => ({
+          year: String(y),
+          count: rawData.filter(r => r["Filing Year"] == y).length
+        }));
+
+        setDynamicStats({
+          total: rawData.length,
+          categoryData,
+          subcatData,
+          filingTrend,
+          geoData: PATENT_DATA.geoData, 
+          assigneeData: PATENT_DATA.assigneeData 
+        });
+      })
+      .catch(err => console.error("Error loading data:", err));
+  }, []);
+
+  const cleanRows = rows.filter(r => 
+    r["Unnamed: 1"] !== "Discuss" && 
+    r["Unnamed: 1"] !== "Sr. No." &&
+    Object.values(r).some(v => v !== null && v !== "-")
+  );
+
+  const allColumns = cleanRows.length > 0 
+    ? Object.keys(cleanRows[0]).filter(c => 
+        !c.toLowerCase().includes("unnamed") && 
+        !c.endsWith("_link") && 
+        c !== "null"
+      )
+    : [];
+
+  const DASHBOARD_CHARTS = [
+    { id: 0, label: "Categories",     icon: "📊", component: <Chart1_Category data={dynamicStats} /> },
+    { id: 1, label: "Sub-Categories", icon: "🔍", component: <Chart2_Subcategory data={dynamicStats} /> },
+    { id: 2, label: "Filing Trend",   icon: "📈", component: <Chart3_FilingTrend data={dynamicStats} /> },
+    { id: 3, label: "Geography",      icon: "🌍", component: <Chart4_Geography /> },
+    { id: 4, label: "Taxonomy Map",   icon: "🗺️", component: <Chart5_Taxonomy /> },
+    { id: 5, label: "Assignees",      icon: "🏢", component: <Chart6_Assignee /> },
+    { id: 6, label: "Master Data",    icon: "📊", component: null },
+  ];
+
+  const groupedCols = [];
+  let currentGroup = { name: null, cols: [] };
+  allColumns.forEach(col => {
+    const cat = mapping[col];
+    if (cat !== currentGroup.name) {
+      if (currentGroup.cols.length > 0) groupedCols.push(currentGroup);
+      currentGroup = { name: cat, cols: [col] };
+    } else {
+      currentGroup.cols.push(col);
+    }
+  });
+  if (currentGroup.cols.length > 0) groupedCols.push(currentGroup);
+
+  const filteredRows = cleanRows.filter(r => 
+    Object.values(r).some(val => String(val).toLowerCase().includes(search.toLowerCase()))
+  );
   return (
     <div
       style={{
@@ -562,7 +699,7 @@ const Dashboard = ({ user }) => {
         >
           <div style={{ display: "flex", gap: 6 }}>
             {[
-              { v: "480", l: "Patents" },
+              { v: "423", l: "Patents" },
               { v: "4", l: "Categories" },
               { v: "9", l: "Geographies" },
             ].map((s, i) => (
@@ -704,7 +841,7 @@ const Dashboard = ({ user }) => {
         </aside>
 
         <main style={{ flex: 1, overflowY: "auto", padding: "28px 32px" }}>
-          <div style={{ maxWidth: 900, margin: "0 auto" }}>
+          <div style={{ maxWidth: activeChart === 6 ? "100%" : 900, margin: "0 auto" }}>
             <div
               style={{
                 marginBottom: 24,
@@ -722,19 +859,18 @@ const Dashboard = ({ user }) => {
                   Technologies
                 </div>
               </div>
-              <div
-                style={{
-                  fontSize: 11,
-                  color: C.muted,
-                  padding: "6px 14px",
-                  background: C.surface,
-                  borderRadius: 20,
-                  border: `1px solid ${C.border}`,
-                }}
-              >
-                📁 Patent_tagging_RNR_WIP-23.xlsx
-              </div>
-              <button 
+
+              {activeChart === 6 && (
+                <input 
+                  type="text" 
+                  placeholder="Search patents..." 
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  style={{ background: "#111827", border: `1px solid ${C.border}`, borderRadius: 8, color: C.text, padding: "8px 16px", outline: "none", width: 300 }}
+                />
+              )}
+              
+              {/* <button 
                 onClick={() => window.open("/data", "_blank")}
                 style={{ 
                   background: "rgba(255,255,255,0.05)", 
@@ -760,14 +896,97 @@ const Dashboard = ({ user }) => {
                 }}
               >
                 📋 View Full Data
-              </button>
+              </button> */}
             </div>
-            {CHARTS[activeChart].component}
+            {activeChart === 6 ? (
+              <div style={{ overflow: "auto", border: `1px solid ${C.border}`, borderRadius: 12, maxHeight: "calc(113vh - 250px)", background: "#0B1224" }}>
+                <table style={{ borderCollapse: "collapse", width: "100%", fontSize: "11px" }}>
+                  <thead style={{ position: "sticky", top: 0, background: "#1A2235", zIndex: 10 }}>
+                    <tr>
+                      {groupedCols.map((group, i) => (
+                        <th key={i} colSpan={group.cols.length} style={{ 
+                          padding: "8px 12px", 
+                          background: group.name ? (group.name.includes("Sensing") ? "#D9EAD3" : group.name.includes("Ablation") ? "#FCE5CD" : "#E2E8F0") : "transparent",
+                          color: group.name ? "#333" : "transparent",
+                          fontSize: "10px", fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(0,0,0,0.1)", borderRight: "1px solid rgba(0,0,0,0.05)"
+                        }}>
+                          {group.name}
+                        </th>
+                      ))}
+                    </tr>
+                    <tr>
+                      {allColumns.map((col) => (
+                        <th key={col} style={{ padding: "10px 12px", textAlign: "left", background: "#1A2235", color: "#94A3B8", borderBottom: `1px solid ${C.border}`, borderRight: "1px solid rgba(255,255,255,0.05)", whiteSpace: "nowrap", fontWeight: 600 }}>
+                          {col}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredRows.map((row, i) => (
+                      <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                        {allColumns.map((col) => {
+                          const isPubNum = col.toLowerCase().includes("publication");
+                          const link = isPubNum ? row[`${col}_link`] : null;
+
+                          return (
+                            <td 
+                              key={col} 
+                              onClick={() => !link && row[col] && setSelectedCell({ col, val: row[col] })} 
+                              style={{ 
+                                padding: "8px 12px", 
+                                color: link ? C.accent : "#CBD5E1", 
+                                borderRight: "1px solid rgba(255,255,255,0.05)", 
+                                maxWidth: 200, 
+                                overflow: "hidden", 
+                                textOverflow: "ellipsis", 
+                                whiteSpace: "nowrap", 
+                                cursor: "pointer",
+                                textDecoration: link ? "underline" : "none"
+                              }}
+                            >
+                              {link ? (
+                                <a href={link} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "inherit" }}>
+                                  {row[col]}
+                                </a>
+                              ) : (
+                                row[col] === 1 || row[col] === "1" || row[col] === "R" ? "✔" : (row[col] || "-")
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              DASHBOARD_CHARTS[activeChart].component
+            )}
           </div>
         </main>
+
+        {/* Cell Detail Modal */}
+        {selectedCell && (
+          <div onClick={() => setSelectedCell(null)} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 40 }}>
+            <div onClick={e => e.stopPropagation()} style={{ background: "#1A2235", border: `1px solid ${C.border}`, borderRadius: 12, padding: 32, maxWidth: 800, width: "100%", maxHeight: "80vh", overflowY: "auto", position: "relative" }}>
+              <button onClick={() => setSelectedCell(null)} style={{ position: "absolute", top: 16, right: 16, background: "transparent", border: "none", color: "#94A3B8", fontSize: 24, cursor: "pointer" }}>×</button>
+              <div style={{ fontSize: 10, color: C.accent, textTransform: "uppercase", fontWeight: 700, marginBottom: 8 }}>{selectedCell.col}</div>
+              <div style={{ fontSize: 14, color: C.text, lineHeight: "1.6", whiteSpace: "pre-wrap" }}>{selectedCell.val}</div>
+            </div>
+          </div>
+        )}
       </div>
 
-      {showChat && <Chatbot onClose={() => setShowChat(false)} />}
+      {showChat && (
+        <Chatbot 
+          dynamicStats={dynamicStats} 
+          cleanRows={cleanRows} 
+          allColumns={allColumns} 
+          mapping={mapping} 
+          onClose={() => setShowChat(false)} 
+        />
+      )}
     </div>
   );
 };

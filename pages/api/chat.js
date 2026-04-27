@@ -7,11 +7,13 @@ const client = new OpenAI({
 });
 
 export default async function handler(req, res) {
+  console.log("Chat API called");
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   if (!process.env.OPENAI_API_KEY) {
+    console.error("ERROR: OPENAI_API_KEY is missing from environment variables");
     return res.status(500).json({
       error: "OPENAI_API_KEY not configured on server.",
     });

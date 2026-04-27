@@ -2,70 +2,68 @@ import pandas as pd
 import json
 import os
 import numpy as np
+import openpyxl
 
 def convert():
     files = [f for f in os.listdir('.') if f.endswith('.xlsx')]
     if not files: return print("Error: No .xlsx file found")
     
     file_path = files[0]
-    print(f"Reading {file_path}...")
+    print(f"Reading {file_path} with links...")
 
-    # Step 1: Find the header row (the one with 'Sr. No.')
-    raw_df = pd.read_excel(file_path, header=None)
+    # Load workbook to extract hyperlinks
+    wb = openpyxl.load_workbook(file_path, data_only=True)
+    ws = wb.active
+
+    # Step 1: Find header row
     header_row_index = 0
-    for i, row in raw_df.iterrows():
-        if "Sr. No." in [str(v).strip() for v in row.values]:
+    for i, row in enumerate(ws.iter_rows(values_only=True), 1):
+        if "Sr. No." in [str(v).strip() for v in row if v]:
             header_row_index = i
             break
-            
-    # Step 2: Get the Category Row (usually just above the header row)
-    cat_row_index = header_row_index - 1 if header_row_index > 0 else 0
-    cat_data = raw_df.iloc[cat_row_index].values
-    sub_data = raw_df.iloc[header_row_index].values
 
-    # Step 3: Build Category Mapping
+    # Step 2: Extract Headers
+    headers = [str(cell.value).strip().replace('\n', ' ') for cell in ws[header_row_index]]
+    pub_col_idx = next((i for i, h in enumerate(headers) if "Publication" in h), None)
+
+    # Step 3: Category Mapping (Row above headers)
+    cat_row = ws[header_row_index - 1]
     category_mapping = {}
     current_cat = None
-    for i in range(len(cat_data)):
-        cat_val = str(cat_data[i]).strip()
-        if cat_val != 'nan' and cat_val != '':
-            current_cat = cat_val
+    for i, cell in enumerate(cat_row):
+        val = str(cell.value).strip() if cell.value else None
+        if val and val != 'None': current_cat = val
+        sub_val = headers[i]
+        if current_cat and sub_val: category_mapping[sub_val] = current_cat
+
+    # Step 4: Extract Data and Links
+    data = []
+    for row in ws.iter_rows(min_row=header_row_index + 1):
+        row_dict = {}
+        for i, cell in enumerate(row):
+            col_name = headers[i]
+            val = cell.value
+            
+            # If this is the Publication Number column, check for hyperlink
+            if i == pub_col_idx and cell.hyperlink:
+                row_dict[f"{col_name}_link"] = cell.hyperlink.target
+            
+            row_dict[col_name] = val
         
-        sub_val = str(sub_data[i]).strip()
-        if sub_val != 'nan' and current_cat:
-            category_mapping[sub_val] = current_cat
+        # Only add if Publication Number is not empty
+        if pub_col_idx is not None and row[pub_col_idx].value:
+            data.append(row_dict)
 
-    # Step 4: Load the actual data
-    df = pd.read_excel(file_path, header=header_row_index)
-    
-    # Clean up column names (remove spaces and newlines)
-    df.columns = [str(c).strip().replace('\n', ' ') for c in df.columns]
-    
-    # Find the publication number column even if the name is slightly different
-    pub_col = next((c for c in df.columns if "Publication" in c), None)
-    
-    if pub_col:
-        df = df.dropna(subset=[pub_col])
-    else:
-        # If we can't find the column, just drop rows that are all empty
-        df = df.dropna(how='all')
-
-    # Convert NaNs to None for valid JSON
-    df = df.replace({np.nan: None, np.inf: None, -np.inf: None})
-    
-    records = df.to_dict(orient='records')
-    
+    # Convert to valid JSON format
     output = {
         "mapping": category_mapping,
-        "data": records
+        "data": data
     }
     
-    output_path = "public/data.json"
-    os.makedirs("public", exist_ok=True)
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(output, f, indent=2, ensure_ascii=False)
+    with open("public/data.json", "w", encoding="utf-8") as f:
+        json.dump(output, f, indent=2, ensure_ascii=False, default=lambda x: None)
 
-    print(f"Done ✅ {len(records)} records saved with category mapping!")
+    print(f"Done ✅ {len(data)} records with links saved!")
 
 if __name__ == "__main__":
     convert()
