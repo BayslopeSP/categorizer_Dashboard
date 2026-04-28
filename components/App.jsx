@@ -6,7 +6,7 @@ import {
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const PATENT_DATA = {
-  total: 423,
+  total: 481,
   categoryData: [
     { name: "Sensing Modality", count: 642, fill: "#00D4FF" },
     { name: "Tissue / Anatomical Target", count: 406, fill: "#7C3AED" },
@@ -114,22 +114,30 @@ Your ONLY source of truth is the DYNAMIC DATASET SUMMARY and FULL PATENT LIST pr
 Do not use any hardcoded numbers from previous versions. 
 If the user asks for counts, calculate them based on the FULL PATENT LIST provided in the context.`;
 
-// ─── THEME ───────────────────────────────────────────────────────────────────
+// ─── THEME ────────────────────────────────────────────────────────────
 const C = {
-  bg: "#070C1A",
-  surface: "rgba(255,255,255,0.04)",
-  border: "rgba(255,255,255,0.08)",
-  accent: "#00D4FF",
-  accent2: "#7C3AED",
-  text: "#F1F5F9",
-  muted: "#64748B",
-  grid: "rgba(255,255,255,0.05)",
+  bg: "#FFFFFF",
+  surface: "#FFFFFF",
+  border: "#E5E7EB", // Reverted to light border
+  accent: "#000000",
+  accent2: "#4B5563",
+  text: "#111827",
+  muted: "#6B7280",
+  grid: "#F3F4F6",
 };
-const CHART_COLORS = ["#00D4FF", "#7C3AED", "#10B981", "#F59E0B", "#EF4444", "#EC4899", "#06B6D4", "#8B5CF6"];
+const CHART_COLORS = ["#00D4FF", "#7C3AED", "#10B981", "#F59E0B", "#EF4444", "#6366F1"];
+const TABLE_BORDER = "#374151"; // Dark border only for table
+
+const CATEGORY_COLORS = {
+  "Sensing Modality": "#10B981", // Green
+  "Ablation Energy Modality": "#EC4899", // Pink
+  "Data Computational Framework/Data Processing (Sensor Data Processing)": "#3B82F6", // Blue
+  "Tissue / Anatomical Target": "#F59E0B", // Yellow/Orange
+};
 
 // ─── SHARED COMPONENTS ───────────────────────────────────────────────────────
 const Card = ({ children, style = {} }) => (
-  <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, ...style }}>
+  <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24, boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)", ...style }}>
     {children}
   </div>
 );
@@ -144,10 +152,10 @@ const ChartTitle = ({ title, subtitle }) => (
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: "#111827", border: `1px solid ${C.border}`, borderRadius: 10, padding: "10px 14px" }}>
+    <div style={{ background: "#FFFFFF", border: `1px solid ${C.border}`, borderRadius: 10, padding: "10px 14px", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}>
       <div style={{ color: C.muted, fontSize: 11, marginBottom: 4 }}>{label}</div>
       {payload.map((p, i) => (
-        <div key={i} style={{ color: p.color || C.accent, fontSize: 13, fontWeight: 600 }}>
+        <div key={i} style={{ color: "#111827", fontSize: 13, fontWeight: 600 }}>
           {p.name}: {p.value}
         </div>
       ))}
@@ -167,9 +175,9 @@ const Chart1_Category = ({ data }) => {
           <CartesianGrid strokeDasharray="3 3" stroke={C.grid} horizontal={false} />
           <XAxis type="number" tick={{ fill: C.muted, fontSize: 11 }} tickLine={false} axisLine={false} />
           <YAxis dataKey="name" type="category" width={200} tick={{ fill: C.text, fontSize: 12 }} tickLine={false} axisLine={false} />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(0,0,0,0.02)" }} />
           <Bar dataKey="count" name="Patents" radius={[0, 8, 8, 0]} barSize={36}>
-            {chartData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+            {chartData.map((entry, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
@@ -201,7 +209,7 @@ const Chart2_Subcategory = ({ data }) => {
         <select
           value={selected}
           onChange={e => setSelected(e.target.value)}
-          style={{ background: "#111827", border: `1px solid ${C.border}`, borderRadius: 8, color: C.text, padding: "8px 14px", fontSize: 12, cursor: "pointer", outline: "none" }}
+          style={{ background: "#FFFFFF", border: `1px solid ${C.border}`, borderRadius: 8, color: C.text, padding: "8px 14px", fontSize: 12, cursor: "pointer", outline: "none" }}
         >
           {cats.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
@@ -211,7 +219,7 @@ const Chart2_Subcategory = ({ data }) => {
           <CartesianGrid strokeDasharray="3 3" stroke={C.grid} horizontal={false} />
           <XAxis type="number" tick={{ fill: C.muted, fontSize: 11 }} tickLine={false} axisLine={false} />
           <YAxis dataKey="name" type="category" width={210} tick={{ fill: C.text, fontSize: 11 }} tickLine={false} axisLine={false} />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(0,0,0,0.02)" }} />
           <Bar dataKey="count" name="Patents" radius={[0, 8, 8, 0]} barSize={28}>
             {(subcatData[selected] || []).map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
           </Bar>
@@ -291,34 +299,34 @@ const Chart4_Geography = () => {
 
 const Chart5_Taxonomy = () => (
   <Card>
-    <ChartTitle title="Patent Taxonomy — Categories & Sub-Categories" subtitle="Structural map of the classification framework used across all 423 patents" />
+    <ChartTitle title="Patent Taxonomy — Categories & Sub-Categories" subtitle="Structural map of the classification framework used across all 481 patents" />
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       {PATENT_DATA.taxonomyMap.map((cat, ci) => (
         <div key={ci} style={{ display: "flex", gap: 0, alignItems: "stretch" }}>
           <div style={{
             width: 190, flexShrink: 0, borderRadius: "14px 0 0 14px",
-            background: `${cat.color}18`, border: `1px solid ${cat.color}44`, borderRight: "none",
+            background: "#F9FAFB", border: `1px solid ${C.border}`, borderRight: "none",
             padding: "16px 20px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 5,
           }}>
             <div style={{ fontSize: 20 }}>{cat.icon}</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: cat.color, lineHeight: 1.3 }}>{cat.category}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", lineHeight: 1.3 }}>{cat.category}</div>
             <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.4 }}>{cat.desc}</div>
           </div>
           <div style={{ width: 24, flexShrink: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: "100%", height: 2, background: `linear-gradient(90deg, ${cat.color}60, ${cat.color}20)` }} />
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: cat.color, zIndex: 1 }} />
+            <div style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: "100%", height: 2, background: C.border }} />
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#111827", zIndex: 1 }} />
           </div>
           <div style={{
             flex: 1, borderRadius: "0 14px 14px 0",
-            border: `1px solid ${cat.color}22`, borderLeft: `2px solid ${cat.color}33`,
-            background: "rgba(255,255,255,0.02)", padding: "14px 16px",
+            border: `1px solid ${C.border}`, borderLeft: `2px solid #E5E7EB`,
+            background: "#FFFFFF", padding: "14px 16px",
             display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8,
           }}>
             {cat.subs.map((s, si) => (
               <div key={si} style={{
                 padding: "6px 14px", borderRadius: 20,
-                background: `${cat.color}14`, border: `1px solid ${cat.color}35`,
-                fontSize: 12, fontWeight: 500, color: cat.color, cursor: "default",
+                background: "#F3F4F6", border: `1px solid ${C.border}`,
+                fontSize: 12, fontWeight: 500, color: "#374151", cursor: "default",
               }}>
                 {s}
               </div>
@@ -330,7 +338,7 @@ const Chart5_Taxonomy = () => (
     <div style={{ marginTop: 16, padding: "10px 16px", background: "rgba(255,255,255,0.02)", borderRadius: 10, border: `1px solid ${C.border}`, display: "flex", gap: 20, flexWrap: "wrap" }}>
       <span style={{ fontSize: 11, color: C.muted }}>📋 4 top-level categories</span>
       <span style={{ fontSize: 11, color: C.muted }}>🏷️ 31 sub-categories total</span>
-      <span style={{ fontSize: 11, color: C.muted }}>📄 423 patents tagged</span>
+      <span style={{ fontSize: 11, color: C.muted }}>📄 481 patents tagged</span>
     </div>
   </Card>
 );
@@ -369,7 +377,7 @@ const Chart6_Assignee = () => {
 };
 
 // ─── CHATBOT ─────────────────────────────────────────────────────────────────
-const Chatbot = ({ dynamicStats, cleanRows, allColumns, mapping, onClose }) => {
+const Chatbot = ({ dynamicStats, cleanRows, allColumns, mapping, onClose, T }) => {
   const [messages, setMessages] = useState([
     { role: "assistant", content: "Hi! I'm your Patent Intelligence Assistant. Ask me anything about this dataset — categories, filing trends, geographies, assignees, or specific technologies." }
   ]);
@@ -451,16 +459,17 @@ const Chatbot = ({ dynamicStats, cleanRows, allColumns, mapping, onClose }) => {
 
   return (
     <div style={{
-      position: "fixed", right: 20, bottom: 20, width: 380, height: 560,
-      background: "#0D1628", border: `1px solid ${C.border}`, borderRadius: 20,
+      position: "fixed", right: 20, bottom: 20, width: 400, height: 600,
+      background: "#FFFFFF", border: `1px solid ${C.border}`, borderRadius: 16,
       display: "flex", flexDirection: "column", zIndex: 1000,
-      boxShadow: "0 25px 60px rgba(0,0,0,0.6)",
+      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
     }}>
       <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 12 }}>
-        <div style={{ width: 36, height: 36, borderRadius: "50%", background: `linear-gradient(135deg, ${C.accent}, ${C.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🔬</div>
+        <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#000000", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🔬</div>
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>Patent Intelligence AI</div>
-          <div style={{ fontSize: 10, color: "#10B981" }}>● Live · Powered by Claude</div>
+          <div style={{ fontSize: 10, color: "#10B981" }}>● Live · Powered by Bayslope Technologies</div>
+          <div style={{ fontSize: 10,  fontWeight: 700, color: C.text  }}> Ask in English or Hebrew</div>
         </div>
         <button onClick={onClose} style={{ marginLeft: "auto", background: "none", border: "none", color: C.muted, cursor: "pointer", fontSize: 18, padding: 4 }}>✕</button>
       </div>
@@ -469,11 +478,11 @@ const Chatbot = ({ dynamicStats, cleanRows, allColumns, mapping, onClose }) => {
         {messages.map((msg, i) => (
           <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start" }}>
             <div style={{
-              maxWidth: "82%", padding: "10px 14px",
-              borderRadius: msg.role === "user" ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-              background: msg.role === "user" ? `linear-gradient(135deg, ${C.accent}CC, ${C.accent2}CC)` : "rgba(255,255,255,0.06)",
+              maxWidth: "85%", padding: "10px 14px",
+              borderRadius: msg.role === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
+              background: msg.role === "user" ? "#000000" : "#F3F4F6",
               border: msg.role === "user" ? "none" : `1px solid ${C.border}`,
-              fontSize: 12.5, color: C.text, lineHeight: 1.6, whiteSpace: "pre-wrap",
+              fontSize: 13, color: msg.role === "user" ? "#FFFFFF" : "#111827", lineHeight: 1.6, whiteSpace: "pre-wrap",
             }}>
               {msg.content}
             </div>
@@ -496,7 +505,7 @@ const Chatbot = ({ dynamicStats, cleanRows, allColumns, mapping, onClose }) => {
         <div style={{ padding: "0 16px 12px", display: "flex", flexWrap: "wrap", gap: 6 }}>
           {["Which country files most?", "Top sensing modality?", "AI/ML patent count?", "Filing trend 2022→2024?"].map((q, i) => (
             <button key={i} onClick={() => setInput(q)}
-              style={{ background: "rgba(0,212,255,0.08)", border: `1px solid rgba(0,212,255,0.2)`, borderRadius: 20, padding: "5px 12px", fontSize: 11, color: C.accent, cursor: "pointer" }}>
+              style={{ background: "#F3F4F6", border: `1px solid ${C.border}`, borderRadius: 20, padding: "5px 12px", fontSize: 11, color: C.muted, cursor: "pointer" }}>
               {q}
             </button>
           ))}
@@ -508,12 +517,12 @@ const Chatbot = ({ dynamicStats, cleanRows, allColumns, mapping, onClose }) => {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === "Enter" && sendMessage()}
-          placeholder="Ask about patents..."
-          style={{ flex: 1, background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`, borderRadius: 12, padding: "10px 14px", color: C.text, fontSize: 12, outline: "none" }}
+          placeholder={T.chatPlaceholder}
+          style={{ flex: 1, background: "#F9FAFB", border: `1px solid ${C.border}`, borderRadius: 12, padding: "10px 14px", color: C.text, fontSize: 12, outline: "none" }}
         />
         <button onClick={sendMessage} disabled={loading || !input.trim()}
           style={{
-            background: loading || !input.trim() ? "rgba(0,212,255,0.2)" : `linear-gradient(135deg, ${C.accent}, ${C.accent2})`,
+            background: loading || !input.trim() ? "#E5E7EB" : "#000000",
             border: "none", borderRadius: 12, padding: "10px 16px",
             cursor: loading || !input.trim() ? "not-allowed" : "pointer",
             color: "#fff", fontSize: 14,
@@ -527,16 +536,6 @@ const Chatbot = ({ dynamicStats, cleanRows, allColumns, mapping, onClose }) => {
 };
 
 // ─── DASHBOARD ────────────────────────────────────────────────────────────────
-const CHARTS = [
-  { id: 0, label: "Categories",     icon: "📊", component: <Chart1_Category /> },
-  { id: 1, label: "Sub-Categories", icon: "🔍", component: <Chart2_Subcategory /> },
-  { id: 2, label: "Filing Trend",   icon: "📈", component: <Chart3_FilingTrend /> },
-  { id: 3, label: "Geography",      icon: "🌍", component: <Chart4_Geography /> },
-  { id: 4, label: "Taxonomy Map",   icon: "🗺️", component: <Chart5_Taxonomy /> },
-  { id: 5, label: "Assignees",      icon: "🏢", component: <Chart6_Assignee /> },
-  { id: 6, label: "Master Data",    icon: "📊", component: null },
-];
-
 const Dashboard = ({ user }) => {
   const [activeChart, setActiveChart] = useState(0);
   const [showChat, setShowChat] = useState(false);
@@ -545,6 +544,71 @@ const Dashboard = ({ user }) => {
   const [search, setSearch] = useState("");
   const [selectedCell, setSelectedCell] = useState(null);
   const [dynamicStats, setDynamicStats] = useState(null);
+  const [columnFilters, setColumnFilters] = useState({}); // Stores selected values for each column
+  const [activeFilterDropdown, setActiveFilterDropdown] = useState(null);
+  const [filterPos, setFilterPos] = useState({ top: 0, left: 0 });
+  const [lang, setLang] = useState("EN"); // "EN" or "HE"
+
+  const TRANSLATIONS = {
+    EN: {
+      title: "Bayslope Technologies",
+      subtitle: "Patent Intelligence Platform",
+      visualizations: "Visualizations",
+      categories: "Categories",
+      subcategories: "Sub-Categories",
+      filingTrend: "Filing Trend",
+      geography: "Geography",
+      taxonomyMap: "Taxonomy Map",
+      assignees: "Assignees",
+      patentData: "Patent Data",
+      aiChat: "AI Chat",
+      chatPlaceholder: "Ask in English or Hebrew?...",
+      searchPlaceholder: "Search patents...",
+      downloadExcel: "Download Excel",
+      downloadPpt: "Download PPT",
+      patents: "Patents",
+      geographies: "Geographies",
+      admin: "admin",
+      viewFullData: "📋 View Full Data",
+      chartCatTitle: "Patent Count by Category",
+      chartSubTitle: "Patent Count by Sub-Category",
+      chartTrendTitle: "Filing Trend Over Time",
+      chartGeoTitle: "Patent Filing by Geography",
+      chartTaxTitle: "Patent Taxonomy — Categories & Sub-Categories",
+      chartAsnTitle: "Patents by Assignee Category",
+      mainSub: "Medical Device Patent Intelligence · Ablation & Sensing Technologies"
+    },
+    HE: {
+      title: "בייסלופ טכנולוגיות",
+      subtitle: "פלטפורמת מודיעין פטנטים",
+      visualizations: "ויזואליזציות",
+      categories: "קטגוריות",
+      subcategories: "תת-קטגוריות",
+      filingTrend: "מגמת הגשה",
+      geography: "גאוגרפיה",
+      taxonomyMap: "מפת טקסונומיה",
+      assignees: "נעברים",
+      patentData: "נתוני פטנטים",
+      aiChat: "צ'אט AI",
+      chatPlaceholder: "שאל באנגלית או בעברית?...",
+      searchPlaceholder: "חפש פטנטים...",
+      downloadExcel: "הורד אקסל",
+      downloadPpt: "הורד PPT",
+      patents: "פטנטים",
+      geographies: "גאוגרפיות",
+      admin: "מנהל",
+      viewFullData: "📋 צפה בנתונים מלאים",
+      chartCatTitle: "ספירת פטנטים לפי קטגוריה",
+      chartSubTitle: "ספירת פטנטים לפי תת-קטגוריה",
+      chartTrendTitle: "מגמת הגשה לאורך זמן",
+      chartGeoTitle: "הגשת פטנטים לפי גאוגרפיה",
+      chartTaxTitle: "טקסונומיה של פטנטים - קטגוריות ותת-קטגוריות",
+      chartAsnTitle: "פטנטים לפי קטגוריית נעברים",
+      mainSub: "מודיעין פטנטים למכשור רפואי · טכנולוגיות אבלציה וחישה"
+    }
+  };
+
+  const T = TRANSLATIONS[lang]; // Tracks coordinates for fixed positioning // Tracks which column dropdown is open
 
   useEffect(() => {
     fetch("/data.json")
@@ -569,10 +633,10 @@ const Dashboard = ({ user }) => {
         });
 
         // Category count = Sum of sub-category tags (ensures 642 for Sensing Modality)
-        const categoryData = categories.map(cat => ({
+        const categoryData = categories.map((cat, i) => ({
           name: cat,
           count: subcatData[cat].reduce((sum, s) => sum + s.count, 0),
-          fill: cat.includes("Sensing") ? "#00D4FF" : cat.includes("Tissue") ? "#7C3AED" : cat.includes("Data") ? "#10B981" : "#F59E0B"
+          fill: CHART_COLORS[i % CHART_COLORS.length]
         })).sort((a, b) => b.count - a.count);
 
         const years = [...new Set(rawData.map(r => r["Filing Year"]))].filter(Boolean).sort();
@@ -608,13 +672,33 @@ const Dashboard = ({ user }) => {
     : [];
 
   const DASHBOARD_CHARTS = [
-    { id: 0, label: "Categories",     icon: "📊", component: <Chart1_Category data={dynamicStats} /> },
-    { id: 1, label: "Sub-Categories", icon: "🔍", component: <Chart2_Subcategory data={dynamicStats} /> },
-    { id: 2, label: "Filing Trend",   icon: "📈", component: <Chart3_FilingTrend data={dynamicStats} /> },
-    { id: 3, label: "Geography",      icon: "🌍", component: <Chart4_Geography /> },
-    { id: 4, label: "Taxonomy Map",   icon: "🗺️", component: <Chart5_Taxonomy /> },
-    { id: 5, label: "Assignees",      icon: "🏢", component: <Chart6_Assignee /> },
-    { id: 6, label: "Master Data",    icon: "📊", component: null },
+    {
+      id: 0,
+      label: T.categories,
+      icon: "📊",
+      component: <Chart1_Category data={dynamicStats} title={T.chartCatTitle} />,
+    },
+    {
+      id: 1,
+      label: T.subcategories,
+      icon: "🔍",
+      component: <Chart2_Subcategory data={dynamicStats} title={T.chartSubTitle} />,
+    },
+    {
+      id: 2,
+      label: T.filingTrend,
+      icon: "📈",
+      component: <Chart3_FilingTrend data={dynamicStats} title={T.chartTrendTitle} />,
+    },
+    { id: 3, label: T.geography, icon: "🌍", component: <Chart4_Geography title={T.chartGeoTitle} /> },
+    {
+      id: 4,
+      label: T.taxonomyMap,
+      icon: "🗺️",
+      component: <Chart5_Taxonomy title={T.chartTaxTitle} />,
+    },
+    { id: 5, label: T.assignees, icon: "🏢", component: <Chart6_Assignee title={T.chartAsnTitle} /> },
+    { id: 6, label: T.patentData, icon: "📊", component: null },
   ];
 
   const groupedCols = [];
@@ -630,9 +714,35 @@ const Dashboard = ({ user }) => {
   });
   if (currentGroup.cols.length > 0) groupedCols.push(currentGroup);
 
-  const filteredRows = cleanRows.filter(r => 
-    Object.values(r).some(val => String(val).toLowerCase().includes(search.toLowerCase()))
-  );
+  const filteredRows = cleanRows.filter(r => {
+    // Global search
+    const matchesSearch = Object.values(r).some(val => 
+      String(val).toLowerCase().includes(search.toLowerCase())
+    );
+    if (!matchesSearch) return false;
+
+    // Column specific filters
+    return Object.entries(columnFilters).every(([col, selectedValues]) => {
+      if (!selectedValues || selectedValues.length === 0) return true;
+      const cellVal = String(r[col] === 1 || r[col] === "1" || r[col] === "R" ? "✔" : (r[col] || "-"));
+      return selectedValues.includes(cellVal);
+    });
+  });
+
+  const toggleColumnFilter = (col, val) => {
+    setColumnFilters(prev => {
+      const current = prev[col] || [];
+      const next = current.includes(val) 
+        ? current.filter(v => v !== val) 
+        : [...current, val];
+      return { ...prev, [col]: next.length > 0 ? next : undefined };
+    });
+  };
+
+  const getUniqueColumnValues = (col) => {
+    const vals = cleanRows.map(r => String(r[col] === 1 || r[col] === "1" || r[col] === "R" ? "✔" : (r[col] || "-")));
+    return [...new Set(vals)].sort();
+  };
   return (
     <div
       style={{
@@ -640,6 +750,7 @@ const Dashboard = ({ user }) => {
         background: C.bg,
         color: C.text,
         fontFamily: "system-ui, -apple-system, sans-serif",
+        direction: lang === "HE" ? "rtl" : "ltr",
       }}
     >
       <header
@@ -648,7 +759,7 @@ const Dashboard = ({ user }) => {
           top: 0,
           zIndex: 50,
           borderBottom: `1px solid ${C.border}`,
-          background: "rgba(7,12,26,0.95)",
+          background: "rgba(255,255,255,0.95)",
           backdropFilter: "blur(20px)",
           padding: "0 28px",
           display: "flex",
@@ -662,7 +773,7 @@ const Dashboard = ({ user }) => {
               width: 40,
               height: 40,
               borderRadius: 10,
-              background: `linear-gradient(135deg, ${C.accent}, ${C.accent2})`,
+              background: "#000000",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -694,48 +805,94 @@ const Dashboard = ({ user }) => {
             marginLeft: "auto",
             display: "flex",
             alignItems: "center",
-            gap: 16,
+            gap: 20,
           }}
         >
-          <div style={{ display: "flex", gap: 6 }}>
-            {[
-              { v: "423", l: "Patents" },
-              { v: "4", l: "Categories" },
-              { v: "9", l: "Geographies" },
-            ].map((s, i) => (
-              <div
-                key={i}
-                style={{
-                  textAlign: "center",
-                  padding: "4px 14px",
-                  background: C.surface,
-                  borderRadius: 8,
-                  border: `1px solid ${C.border}`,
+          <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+            {/* Language Toggle - High Visibility */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase" }}>
+                {lang === "EN" ? "Language" : "שפה"}
+              </span>
+              <div 
+                style={{ 
+                  display: "flex", 
+                  background: "#FFFFFF", 
+                  padding: 3, 
+                  borderRadius: 24, 
+                  border: `2px solid #111827`,
+                  cursor: "pointer",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
                 }}
+                onClick={() => setLang(lang === "EN" ? "HE" : "EN")}
               >
-                <div style={{ fontSize: 15, fontWeight: 700, color: C.accent }}>
-                  {s.v}
+                <div style={{
+                  padding: "5px 14px",
+                  borderRadius: 20,
+                  fontSize: 12,
+                  fontWeight: 800,
+                  background: lang === "EN" ? "#111827" : "transparent",
+                  color: lang === "EN" ? "#FFFFFF" : "#6B7280",
+                  transition: "all 0.2s"
+                }}>
+                  EN
                 </div>
-                <div
-                  style={{
-                    fontSize: 9,
-                    color: C.muted,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
-                  }}
-                >
-                  {s.l}
+                <div style={{
+                  padding: "5px 14px",
+                  borderRadius: 20,
+                  fontSize: 12,
+                  fontWeight: 800,
+                  background: lang === "HE" ? "#111827" : "transparent",
+                  color: lang === "HE" ? "#FFFFFF" : "#6B7280",
+                  transition: "all 0.2s"
+                }}>
+                  HE
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* Stats Boxes */}
+            <div style={{ display: "flex", gap: 6 }}>
+              {[
+                { v: "481", l: T.patents },
+                { v: "4", l: T.categories },
+                { v: "9", l: T.geographies },
+              ].map((s, i) => (
+                <div
+                  key={i}
+                  style={{
+                    textAlign: "center",
+                    padding: "4px 14px",
+                    background: "#F9FAFB",
+                    borderRadius: 8,
+                    border: `1px solid ${C.border}`,
+                  }}
+                >
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#111827" }}>
+                    {s.v}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 9,
+                      color: C.muted,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                    }}
+                  >
+                    {s.l}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
+
           <div
             style={{
               display: "flex",
               alignItems: "center",
               gap: 8,
               padding: "6px 14px",
-              background: C.surface,
+              background: "#F9FAFB",
               borderRadius: 20,
               border: `1px solid ${C.border}`,
             }}
@@ -745,7 +902,7 @@ const Dashboard = ({ user }) => {
                 width: 28,
                 height: 28,
                 borderRadius: "50%",
-                background: `linear-gradient(135deg, ${C.accent}, ${C.accent2})`,
+                background: "#111827",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -771,7 +928,7 @@ const Dashboard = ({ user }) => {
             display: "flex",
             flexDirection: "column",
             gap: 4,
-            background: "rgba(255,255,255,0.01)",
+            background: "#F9FAFB",
           }}
         >
           <div
@@ -784,39 +941,46 @@ const Dashboard = ({ user }) => {
               marginBottom: 8,
             }}
           >
-            Visualizations
+            {T.visualizations}
           </div>
-          {CHARTS.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setActiveChart(c.id)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "11px 12px",
-                borderRadius: 10,
-                border: "none",
-                cursor: "pointer",
-                textAlign: "left",
-                background:
-                  activeChart === c.id
-                    ? `linear-gradient(135deg, ${C.accent}22, ${C.accent2}11)`
-                    : "transparent",
-                color: activeChart === c.id ? C.accent : C.muted,
-                borderLeft:
-                  activeChart === c.id
-                    ? `3px solid ${C.accent}`
-                    : "3px solid transparent",
-                transition: "all 0.15s",
-                fontSize: 13,
-                fontWeight: activeChart === c.id ? 600 : 400,
-              }}
-            >
-              <span>{c.icon}</span>
-              <span>{c.label}</span>
-            </button>
-          ))}
+          {DASHBOARD_CHARTS.map((c) => {
+            const isPatentData = c.id === 6;
+            const isActive = activeChart === c.id;
+            
+            return (
+              <button
+                key={c.id}
+                onClick={() => setActiveChart(c.id)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "11px 12px",
+                  borderRadius: 10,
+                  border: isPatentData && !isActive ? "1px solid #3B82F6" : "none",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  background: isActive
+                    ? "#111827"
+                    : isPatentData 
+                      ? "#EFF6FF" // Light blue for data item
+                      : "transparent",
+                  color: isActive 
+                    ? "#FFFFFF" 
+                    : isPatentData 
+                      ? "#1E40AF" // Darker blue for data text
+                      : C.muted,
+                  transition: "all 0.15s",
+                  fontSize: 13,
+                  fontWeight: (isActive || isPatentData) ? 600 : 400,
+                  marginTop: isPatentData ? 12 : 0, // Extra space before data item
+                }}
+              >
+                <span style={{ fontSize: isPatentData ? 16 : 14 }}>{c.icon}</span>
+                <span>{c.label}</span>
+              </button>
+            );
+          })}
           <div style={{ marginTop: "auto", padding: "12px 8px" }}>
             <button
               onClick={() => setShowChat((s) => !s)}
@@ -824,9 +988,9 @@ const Dashboard = ({ user }) => {
                 width: "100%",
                 padding: "11px 14px",
                 borderRadius: 12,
-                border: `1px solid ${C.accent}44`,
-                background: showChat ? `${C.accent}22` : "transparent",
-                color: C.accent,
+                border: `1px solid #111827`,
+                background: showChat ? "#111827" : "transparent",
+                color: showChat ? "#FFFFFF" : "#111827",
                 cursor: "pointer",
                 fontSize: 13,
                 fontWeight: 600,
@@ -835,7 +999,7 @@ const Dashboard = ({ user }) => {
                 gap: 8,
               }}
             >
-              <span>💬</span> AI Chat
+              <span>💬</span> {T.aiChat}
             </button>
           </div>
         </aside>
@@ -852,23 +1016,72 @@ const Dashboard = ({ user }) => {
             >
               <div>
                 <div style={{ fontSize: 22, fontWeight: 700, color: C.text }}>
-                  {CHARTS[activeChart].label}
+                  {DASHBOARD_CHARTS[activeChart].label}
                 </div>
                 <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>
-                  Medical Device Patent Intelligence · Ablation & Sensing
-                  Technologies
+                  {T.mainSub}
                 </div>
               </div>
 
-              {activeChart === 6 && (
-                <input 
-                  type="text" 
-                  placeholder="Search patents..." 
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  style={{ background: "#111827", border: `1px solid ${C.border}`, borderRadius: 8, color: C.text, padding: "8px 16px", outline: "none", width: 300 }}
-                />
-              )}
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                {activeChart === 6 && (
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <a 
+                      href="/Bay_IP_BI_Project_Patent_Dataset.xlsx" 
+                      download 
+                      style={{ 
+                        textDecoration: "none",
+                        background: "#FFFFFF", 
+                        border: `1px solid ${C.border}`, 
+                        color: "#166534", 
+                        padding: "8px 16px", 
+                        borderRadius: 8, 
+                        fontSize: 12, 
+                        fontWeight: 600,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        cursor: "pointer",
+                        transition: "all 0.2s"
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = "#F0FDF4"}
+                      onMouseLeave={e => e.currentTarget.style.background = "#FFFFFF"}
+                    >
+                      <span style={{ fontSize: 14 }}>📊</span> {T.downloadExcel}
+                    </a>
+                    <button 
+                      style={{ 
+                        background: "#FFFFFF", 
+                        border: `1px solid ${C.border}`, 
+                        color: "#991B1B", 
+                        padding: "8px 16px", 
+                        borderRadius: 8, 
+                        fontSize: 12, 
+                        fontWeight: 600,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        cursor: "pointer",
+                        transition: "all 0.2s"
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = "#FEF2F2"}
+                      onMouseLeave={e => e.currentTarget.style.background = "#FFFFFF"}
+                      onClick={() => alert("PPT will be available soon!")}
+                    >
+                      <span style={{ fontSize: 14 }}>📉</span> {T.downloadPpt}
+                    </button>
+                  </div>
+                )}
+                {activeChart === 6 && (
+                  <input 
+                    type="text" 
+                    placeholder={T.searchPlaceholder} 
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    style={{ background: "#FFFFFF", border: `1px solid ${C.border}`, borderRadius: 8, color: C.text, padding: "8px 16px", outline: "none", width: 300 }}
+                  />
+                )}
+              </div>
               
               {/* <button 
                 onClick={() => window.open("/data", "_blank")}
@@ -899,32 +1112,146 @@ const Dashboard = ({ user }) => {
               </button> */}
             </div>
             {activeChart === 6 ? (
-              <div style={{ overflow: "auto", border: `1px solid ${C.border}`, borderRadius: 12, maxHeight: "calc(113vh - 250px)", background: "#0B1224" }}>
+              <div style={{ overflow: "auto", border: `1px solid ${TABLE_BORDER}`, borderRadius: 12, maxHeight: "calc(100vh - 200px)", background: "#FFFFFF" }}>
                 <table style={{ borderCollapse: "collapse", width: "100%", fontSize: "11px" }}>
-                  <thead style={{ position: "sticky", top: 0, background: "#1A2235", zIndex: 10 }}>
+                  <thead style={{ position: "sticky", top: 0, background: "#F9FAFB", zIndex: 10 }}>
                     <tr>
                       {groupedCols.map((group, i) => (
                         <th key={i} colSpan={group.cols.length} style={{ 
                           padding: "8px 12px", 
-                          background: group.name ? (group.name.includes("Sensing") ? "#D9EAD3" : group.name.includes("Ablation") ? "#FCE5CD" : "#E2E8F0") : "transparent",
-                          color: group.name ? "#333" : "transparent",
-                          fontSize: "10px", fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(0,0,0,0.1)", borderRight: "1px solid rgba(0,0,0,0.05)"
+                          background: group.name ? (CATEGORY_COLORS[group.name] || "#E5E7EB") : "#E5E7EB", // Grey for baki headers
+                          color: group.name ? "#FFFFFF" : "#4B5563",
+                          fontSize: "10px", fontWeight: 700, textAlign: "center", borderBottom: `1px solid ${TABLE_BORDER}`, borderRight: `1px solid ${TABLE_BORDER}`
                         }}>
                           {group.name}
                         </th>
                       ))}
                     </tr>
                     <tr>
-                      {allColumns.map((col) => (
-                        <th key={col} style={{ padding: "10px 12px", textAlign: "left", background: "#1A2235", color: "#94A3B8", borderBottom: `1px solid ${C.border}`, borderRight: "1px solid rgba(255,255,255,0.05)", whiteSpace: "nowrap", fontWeight: 600 }}>
-                          {col}
-                        </th>
-                      ))}
+                      {allColumns.map((col) => {
+                        const cat = mapping[col];
+                        const bgColor = cat ? (CATEGORY_COLORS[cat] || "#F3F4F6") : "#F3F4F6";
+                        const textColor = cat ? "#FFFFFF" : "#4B5563";
+                        const uniqueVals = getUniqueColumnValues(col);
+                        const isActive = columnFilters[col] && columnFilters[col].length > 0;
+
+                        return (
+                          <th key={col} style={{ 
+                            padding: "10px 12px", 
+                            textAlign: "left", 
+                            background: bgColor, 
+                            color: textColor, 
+                            borderBottom: `1px solid ${TABLE_BORDER}`, 
+                            borderRight: `1px solid ${TABLE_BORDER}`, 
+                            whiteSpace: "nowrap", 
+                            fontWeight: 600,
+                            position: "relative"
+                          }}>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                              {col}
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const rect = e.currentTarget.getBoundingClientRect();
+                                  setFilterPos({ top: rect.bottom + 5, left: rect.left });
+                                  setActiveFilterDropdown(activeFilterDropdown === col ? null : col);
+                                }}
+                                style={{ 
+                                  background: isActive ? "#000" : "rgba(0,0,0,0.1)", 
+                                  border: "none", 
+                                  borderRadius: 4, 
+                                  color: isActive ? "#fff" : textColor, 
+                                  cursor: "pointer", 
+                                  padding: "2px 4px",
+                                  fontSize: "10px"
+                                }}
+                              >
+                                ▽
+                              </button>
+                            </div>
+
+                            {activeFilterDropdown === col && (
+                              <div style={{ 
+                                position: "fixed", 
+                                top: filterPos.top, 
+                                left: filterPos.left, 
+                                background: "#fff", 
+                                border: "1px solid #d1d5db", 
+                                borderRadius: "8px", 
+                                boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)", 
+                                zIndex: 9999, 
+                                minWidth: "220px", 
+                                width: "max-content",
+                                maxWidth: "300px",
+                                display: "flex", 
+                                flexDirection: "column",
+                                overflow: "hidden",
+                                fontFamily: "inherit"
+                              }}>
+                                {/* Header */}
+                                <div style={{ padding: "10px 12px", background: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
+                                  <div style={{ fontSize: "11px", fontWeight: 700, color: "#111827", marginBottom: "2px" }}>Filter {col}</div>
+                                  <div style={{ fontSize: "9px", color: "#6b7280" }}>Select values to filter</div>
+                                </div>
+                                
+                                {/* Scrollable List */}
+                                <div style={{ overflowY: "auto", flex: 1, padding: "6px", maxHeight: "200px" }}>
+                                  {uniqueVals.map(v => (
+                                    <label key={v} style={{ 
+                                      display: "flex", alignItems: "center", gap: "8px", 
+                                      padding: "6px 8px", cursor: "pointer", color: "#374151",
+                                      fontSize: "12px", borderRadius: "4px", transition: "background 0.2s"
+                                    }}
+                                    onMouseEnter={e => e.currentTarget.style.background = "#f3f4f6"}
+                                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                                    >
+                                      <input 
+                                        type="checkbox" 
+                                        style={{ cursor: "pointer", width: "14px", height: "14px" }}
+                                        checked={columnFilters[col]?.includes(v) || false}
+                                        onChange={() => toggleColumnFilter(col, v)}
+                                      />
+                                      <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{v}</span>
+                                    </label>
+                                  ))}
+                                </div>
+
+                                {/* Actions Footer */}
+                                <div style={{ padding: "8px 10px", borderTop: "1px solid #e5e7eb", display: "flex", gap: "8px", background: "#fff" }}>
+                                  <button 
+                                    onClick={() => {
+                                      setColumnFilters(prev => ({ ...prev, [col]: undefined }));
+                                      setActiveFilterDropdown(null);
+                                    }}
+                                    style={{ 
+                                      flex: 1, padding: "6px 0", fontSize: "11px", fontWeight: 500,
+                                      background: "transparent", color: "#4b5563", border: "1px solid #d1d5db", 
+                                      borderRadius: "6px", cursor: "pointer" 
+                                    }}
+                                  >
+                                    Clear
+                                  </button>
+                                  <button 
+                                    onClick={() => setActiveFilterDropdown(null)}
+                                    style={{ 
+                                      flex: 1, padding: "6px 0", fontSize: "11px", fontWeight: 600,
+                                      background: "#111827", color: "#fff", border: "none", 
+                                      borderRadius: "6px", cursor: "pointer" 
+                                    }}
+                                  >
+                                    Apply
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </th>
+                        );
+                      })}
                     </tr>
                   </thead>
                   <tbody>
                     {filteredRows.map((row, i) => (
-                      <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                      <tr key={i} style={{ borderBottom: `1px solid ${TABLE_BORDER}`, background: i % 2 === 0 ? "#FFFFFF" : "#F9FAFB" }}>
                         {allColumns.map((col) => {
                           const isPubNum = col.toLowerCase().includes("publication");
                           const link = isPubNum ? row[`${col}_link`] : null;
@@ -935,8 +1262,8 @@ const Dashboard = ({ user }) => {
                               onClick={() => !link && row[col] && setSelectedCell({ col, val: row[col] })} 
                               style={{ 
                                 padding: "8px 12px", 
-                                color: link ? C.accent : "#CBD5E1", 
-                                borderRight: "1px solid rgba(255,255,255,0.05)", 
+                                color: link ? "#000000" : "#374151", 
+                                borderRight: `1px solid ${TABLE_BORDER}`, 
                                 maxWidth: 200, 
                                 overflow: "hidden", 
                                 textOverflow: "ellipsis", 
@@ -968,10 +1295,10 @@ const Dashboard = ({ user }) => {
 
         {/* Cell Detail Modal */}
         {selectedCell && (
-          <div onClick={() => setSelectedCell(null)} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 40 }}>
-            <div onClick={e => e.stopPropagation()} style={{ background: "#1A2235", border: `1px solid ${C.border}`, borderRadius: 12, padding: 32, maxWidth: 800, width: "100%", maxHeight: "80vh", overflowY: "auto", position: "relative" }}>
-              <button onClick={() => setSelectedCell(null)} style={{ position: "absolute", top: 16, right: 16, background: "transparent", border: "none", color: "#94A3B8", fontSize: 24, cursor: "pointer" }}>×</button>
-              <div style={{ fontSize: 10, color: C.accent, textTransform: "uppercase", fontWeight: 700, marginBottom: 8 }}>{selectedCell.col}</div>
+          <div onClick={() => setSelectedCell(null)} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 40 }}>
+            <div onClick={e => e.stopPropagation()} style={{ background: "#FFFFFF", border: `1px solid ${C.border}`, borderRadius: 12, padding: 32, maxWidth: 800, width: "100%", maxHeight: "80vh", overflowY: "auto", position: "relative", boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}>
+              <button onClick={() => setSelectedCell(null)} style={{ position: "absolute", top: 16, right: 16, background: "transparent", border: "none", color: C.muted, fontSize: 24, cursor: "pointer" }}>×</button>
+              <div style={{ fontSize: 10, color: "#111827", textTransform: "uppercase", fontWeight: 700, marginBottom: 8 }}>{selectedCell.col}</div>
               <div style={{ fontSize: 14, color: C.text, lineHeight: "1.6", whiteSpace: "pre-wrap" }}>{selectedCell.val}</div>
             </div>
           </div>
@@ -985,6 +1312,7 @@ const Dashboard = ({ user }) => {
           allColumns={allColumns} 
           mapping={mapping} 
           onClose={() => setShowChat(false)} 
+          T={T}
         />
       )}
     </div>
@@ -1016,56 +1344,51 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: C.bg, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
-        <div style={{ position: "absolute", top: "-20%", left: "-10%", width: 600, height: 600, borderRadius: "50%", background: `radial-gradient(circle, ${C.accent}08 0%, transparent 70%)` }} />
-        <div style={{ position: "absolute", bottom: "-20%", right: "-10%", width: 600, height: 600, borderRadius: "50%", background: `radial-gradient(circle, ${C.accent2}08 0%, transparent 70%)` }} />
-      </div>
-
-      <div style={{ width: 420, position: "relative" }}>
+    <div style={{ minHeight: "100vh", background: "#F9FAFB", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <div style={{ width: 400, position: "relative" }}>
         <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <div style={{ width: 64, height: 64, borderRadius: 18, background: `linear-gradient(135deg, ${C.accent}, ${C.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, fontWeight: 900, color: "#fff", margin: "0 auto 16px" }}>B</div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: C.text }}>Bayslope Technologies</div>
-          <div style={{ fontSize: 12, color: C.muted, marginTop: 6, letterSpacing: "1.5px", textTransform: "uppercase" }}>Patent Intelligence Platform</div>
+          <div style={{ width: 64, height: 64, borderRadius: 18, background: "#000000", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, fontWeight: 900, color: "#fff", margin: "0 auto 16px" }}>B</div>
+          <div style={{ fontSize: 26, fontWeight: 700, color: "#111827" }}>Bayslope Technologies</div>
+          <div style={{ fontSize: 12, color: "#6B7280", marginTop: 6, letterSpacing: "1.5px", textTransform: "uppercase" }}>Patent Intelligence Platform</div>
         </div>
 
-        <div style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${C.border}`, borderRadius: 24, padding: 36 }}>
-          <div style={{ fontSize: 18, fontWeight: 700, color: C.text, marginBottom: 6 }}>Welcome back</div>
-          <div style={{ fontSize: 12, color: C.muted, marginBottom: 28 }}>Sign in to access patent analytics</div>
+        <div style={{ background: "#FFFFFF", border: `1px solid ${C.border}`, borderRadius: 24, padding: 36, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" }}>
+          <div style={{ fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 6 }}>Welcome back</div>
+          <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 28 }}>Sign in to access patent analytics</div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={{ fontSize: 11, color: C.muted, letterSpacing: "0.5px", textTransform: "uppercase", display: "block", marginBottom: 8 }}>Username</label>
+            <label style={{ fontSize: 11, color: "#6B7280", letterSpacing: "0.5px", textTransform: "uppercase", display: "block", marginBottom: 8 }}>Username</label>
             <input value={username} onChange={e => { setUsername(e.target.value); setError(""); }} onKeyDown={e => e.key === "Enter" && handleSubmit()} placeholder="admin"
-              style={{ width: "100%", padding: "13px 16px", borderRadius: 12, boxSizing: "border-box", background: "rgba(255,255,255,0.05)", border: `1px solid ${error ? "#EF4444" : C.border}`, color: C.text, fontSize: 14, outline: "none" }} />
+              style={{ width: "100%", padding: "13px 16px", borderRadius: 12, boxSizing: "border-box", background: "#F9FAFB", border: `1px solid ${error ? "#EF4444" : C.border}`, color: "#111827", fontSize: 14, outline: "none" }} />
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <label style={{ fontSize: 11, color: C.muted, letterSpacing: "0.5px", textTransform: "uppercase", display: "block", marginBottom: 8 }}>Password</label>
+            <label style={{ fontSize: 11, color: "#6B7280", letterSpacing: "0.5px", textTransform: "uppercase", display: "block", marginBottom: 8 }}>Password</label>
             <div style={{ position: "relative" }}>
               <input type={showPw ? "text" : "password"} value={password} onChange={e => { setPassword(e.target.value); setError(""); }} onKeyDown={e => e.key === "Enter" && handleSubmit()} placeholder="••••••••••"
-                style={{ width: "100%", padding: "13px 44px 13px 16px", borderRadius: 12, boxSizing: "border-box", background: "rgba(255,255,255,0.05)", border: `1px solid ${error ? "#EF4444" : C.border}`, color: C.text, fontSize: 14, outline: "none" }} />
-              <button onClick={() => setShowPw(s => !s)} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: C.muted, cursor: "pointer", fontSize: 14 }}>{showPw ? "🙈" : "👁"}</button>
+                style={{ width: "100%", padding: "13px 44px 13px 16px", borderRadius: 12, boxSizing: "border-box", background: "#F9FAFB", border: `1px solid ${error ? "#EF4444" : C.border}`, color: "#111827", fontSize: 14, outline: "none" }} />
+              <button onClick={() => setShowPw(s => !s)} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#6B7280", cursor: "pointer", fontSize: 14 }}>{showPw ? "🙈" : "👁"}</button>
             </div>
           </div>
 
-          {error && <div style={{ marginBottom: 16, padding: "10px 14px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 10, fontSize: 12, color: "#FCA5A5" }}>{error}</div>}
+          {error && <div style={{ marginBottom: 16, padding: "10px 14px", background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 10, fontSize: 12, color: "#B91C1C" }}>{error}</div>}
 
           <button onClick={handleSubmit} disabled={loading}
-            style={{ width: "100%", padding: 14, borderRadius: 14, border: "none", background: loading ? "rgba(0,212,255,0.3)" : `linear-gradient(135deg, ${C.accent}, ${C.accent2})`, color: "#fff", fontSize: 14, fontWeight: 700, cursor: loading ? "not-allowed" : "pointer" }}>
+            style={{ width: "100%", padding: 14, borderRadius: 14, border: "none", background: loading ? "#9CA3AF" : "#000000", color: "#fff", fontSize: 14, fontWeight: 700, cursor: loading ? "not-allowed" : "pointer" }}>
             {loading ? "Authenticating..." : "Sign In →"}
           </button>
 
-          <div style={{ marginTop: 20, padding: 14, background: "rgba(0,212,255,0.05)", borderRadius: 12, border: `1px solid rgba(0,212,255,0.15)` }}>
-            <div style={{ fontSize: 11, color: C.muted, marginBottom: 6 }}>🔑 Demo credentials</div>
+          <div style={{ marginTop: 20, padding: 14, background: "#F9FAFB", borderRadius: 12, border: `1px solid ${C.border}` }}>
+            <div style={{ fontSize: 11, color: "#6B7280", marginBottom: 6 }}>🔑 Demo credentials</div>
             {Object.entries(CREDS).map(([u, p]) => (
-              <div key={u} style={{ fontSize: 11, color: C.muted, fontFamily: "monospace" }}>
-                <span style={{ color: C.accent }}>{u}</span> / {p}
+              <div key={u} style={{ fontSize: 11, color: "#6B7280", fontFamily: "monospace" }}>
+                <span style={{ color: "#000000" }}>{u}</span> / {p}
               </div>
             ))}
           </div>
         </div>
 
-        <div style={{ textAlign: "center", marginTop: 24, fontSize: 11, color: C.muted }}>
+        <div style={{ textAlign: "center", marginTop: 24, fontSize: 11, color: "#6B7280" }}>
           © 2026 Bayslope Technologies · Patent Intelligence AI
         </div>
       </div>
