@@ -59,15 +59,15 @@ const PATENT_DATA = {
     { year: "2025", count: 90 },
   ],
   geoData: [
-    { country: "China", code: "CN", count: 1854, flag: "🇨🇳", fill: "#EF4444" },
-    { country: "United States", code: "US", count: 942, flag: "🇺🇸", fill: "#3B82F6" },
-    { country: "Europe", code: "EP", count: 456, flag: "🇪🇺", fill: "#10B981" },
-    { country: "Japan", code: "JP", count: 382, flag: "🇯🇵", fill: "#F59E0B" },
-    { country: "PCT / International", code: "WO", count: 215, flag: "🌐", fill: "#6366F1" },
-    { country: "South Korea", code: "KR", count: 148, flag: "🇰🇷", fill: "#06B6D4" },
-    { country: "India", code: "IN", count: 42, flag: "🇮🇳", fill: "#FF6B35" },
-    { country: "Germany", code: "DE", count: 28, flag: "🇩🇪", fill: "#8B5CF6" },
-    { country: "France", code: "FR", count: 12, flag: "🇫🇷", fill: "#EC4899" },
+    { country: "China", code: "CN", count: 291, flag: "🇨🇳", fill: "#EF4444" },
+    { country: "United States", code: "US", count: 136, flag: "🇺🇸", fill: "#3B82F6" },
+    { country: "Europe", code: "EP", count: 76, flag: "🇪🇺", fill: "#10B981" },
+    { country: "Japan", code: "JP", count: 42, flag: "🇯🇵", fill: "#F59E0B" },
+    { country: "PCT / International", code: "WO", count: 132, flag: "🌐", fill: "#6366F1" },
+    { country: "South Korea", code: "KR", count: 9, flag: "🇰🇷", fill: "#06B6D4" },
+    { country: "India", code: "IN", count: 5, flag: "🇮🇳", fill: "#FF6B35" },
+    { country: "Germany", code: "DE", count: 13, flag: "🇩🇪", fill: "#8B5CF6" },
+    { country: "France", code: "FR", count: 2, flag: "🇫🇷", fill: "#EC4899" },
   ],
   assigneeData: [
     { name: "Medical and Healthcare", count: 224, fill: "#EF4444" },
@@ -305,20 +305,20 @@ const Chart5_Taxonomy = () => (
         <div key={ci} style={{ display: "flex", gap: 0, alignItems: "stretch" }}>
           <div style={{
             width: 190, flexShrink: 0, borderRadius: "14px 0 0 14px",
-            background: "#F9FAFB", border: `1px solid ${C.border}`, borderRight: "none",
+            background: `${cat.color}15`, border: `1px solid ${cat.color}40`, borderRight: "none",
             padding: "16px 20px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 5,
           }}>
             <div style={{ fontSize: 20 }}>{cat.icon}</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", lineHeight: 1.3 }}>{cat.category}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: cat.color, lineHeight: 1.3 }}>{cat.category}</div>
             <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.4 }}>{cat.desc}</div>
           </div>
           <div style={{ width: 24, flexShrink: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: "100%", height: 2, background: C.border }} />
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#111827", zIndex: 1 }} />
+            <div style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: "100%", height: 2, background: `${cat.color}40` }} />
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: cat.color, zIndex: 1 }} />
           </div>
           <div style={{
             flex: 1, borderRadius: "0 14px 14px 0",
-            border: `1px solid ${C.border}`, borderLeft: `2px solid #E5E7EB`,
+            border: `1px solid ${cat.color}40`, borderLeft: `2px solid ${cat.color}`,
             background: "#FFFFFF", padding: "14px 16px",
             display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8,
           }}>
@@ -654,12 +654,20 @@ const Dashboard = ({ user }) => {
           })).sort((a, b) => b.count - a.count);
         });
 
-        // Category count = Sum of sub-category tags (ensures 642 for Sensing Modality)
-        const categoryData = categories.map((cat, i) => ({
-          name: cat,
-          count: subcatData[cat].reduce((sum, s) => sum + s.count, 0),
-          fill: CHART_COLORS[i % CHART_COLORS.length]
-        })).sort((a, b) => b.count - a.count);
+        // Category count = Unique patent count per category (Ensures 1 patent = 1 count per category)
+        const categoryData = categories.map((cat, i) => {
+          const subs = Object.keys(map).filter(sub => map[sub] === cat);
+          // Count a patent only if at least one of its sub-categories has a tag (1, "1", or "R")
+          const count = rawData.filter(r => 
+            subs.some(sub => r[sub] === 1 || r[sub] === "1" || r[sub] === "R")
+          ).length;
+          
+          return {
+            name: cat,
+            count: count,
+            fill: CHART_COLORS[i % CHART_COLORS.length]
+          };
+        }).sort((a, b) => b.count - a.count);
 
         const years = [...new Set(rawData.map(r => r["Filing Year"]))].filter(Boolean).sort();
         const filingTrend = years.map(y => ({
@@ -696,29 +704,35 @@ const Dashboard = ({ user }) => {
   const DASHBOARD_CHARTS = [
     {
       id: 0,
+      label: T.taxonomyMap,
+      icon: "🗺️",
+      component: <Chart5_Taxonomy title={T.chartTaxTitle} />,
+    },
+    {
+      id: 1,
       label: T.categories,
       icon: "📊",
       component: <Chart1_Category data={dynamicStats} title={T.chartCatTitle} />,
     },
     {
-      id: 1,
+      id: 2,
       label: T.subcategories,
       icon: "🔍",
       component: <Chart2_Subcategory data={dynamicStats} title={T.chartSubTitle} />,
     },
     {
-      id: 2,
+      id: 3,
       label: T.filingTrend,
       icon: "📈",
       component: <Chart3_FilingTrend data={dynamicStats} title={T.chartTrendTitle} />,
     },
-    { id: 3, label: T.geography, icon: "🌍", component: <Chart4_Geography title={T.chartGeoTitle} /> },
-    {
-      id: 4,
-      label: T.taxonomyMap,
-      icon: "🗺️",
-      component: <Chart5_Taxonomy title={T.chartTaxTitle} />,
-    },
+    { id: 4, label: T.geography, icon: "🌍", component: <Chart4_Geography title={T.chartGeoTitle} /> },
+    // {
+    //   id: 5,
+    //   label: T.taxonomyMap,
+    //   icon: "🗺️",
+    //   component: <Chart5_Taxonomy title={T.chartTaxTitle} />,
+    // },
     { id: 5, label: T.assignees, icon: "🏢", component: <Chart6_Assignee title={T.chartAsnTitle} /> },
     { id: 6, label: T.patentData, icon: "📊", component: null },
   ];
@@ -1159,9 +1173,26 @@ const Dashboard = ({ user }) => {
                     </tr>
                     <tr>
                       {allColumns.map((col) => {
+                        // const cat = mapping[col];
+                        // const bgColor = cat ? (CATEGORY_COLORS[cat] || "#F3F4F6") : "#F3F4F6";
+                        // const textColor = cat ? "#FFFFFF" : "#4B5563";
+                        const isAISummary =
+                          col === "AI Generated Summary-English" ||
+                          col === "AI Generated Summary-Hebrew";
+
                         const cat = mapping[col];
-                        const bgColor = cat ? (CATEGORY_COLORS[cat] || "#F3F4F6") : "#F3F4F6";
-                        const textColor = cat ? "#FFFFFF" : "#4B5563";
+
+                        const bgColor = isAISummary
+                          ? "#7C3AED" // 🔥 purple (ya jo color chaho)
+                          : cat
+                            ? CATEGORY_COLORS[cat] || "#F3F4F6"
+                            : "#F3F4F6";
+
+                        const textColor = isAISummary
+                          ? "#FFFFFF"
+                          : cat
+                            ? "#FFFFFF"
+                            : "#4B5563";
                         const uniqueVals = getUniqueColumnValues(col);
                         const isActive = columnFilters[col] && columnFilters[col].length > 0;
 
@@ -1291,16 +1322,16 @@ const Dashboard = ({ user }) => {
                               key={col} 
                               onClick={() => !link && row[col] && setSelectedCell({ col, val: row[col] })} 
                               style={{ 
-                                padding: "8px 12px", 
-                                color: link ? "#000000" : "#374151", 
-                                borderRight: `1px solid ${TABLE_BORDER}`, 
-                                maxWidth: 200, 
-                                overflow: "hidden", 
-                                textOverflow: "ellipsis", 
-                                whiteSpace: "nowrap", 
-                                cursor: "pointer",
-                                textDecoration: link ? "underline" : "none"
-                              }}
+  padding: "8px 12px", 
+  color: isPubNum ? "#2563eb" : (link ? "#000000" : "#374151"), // BLUE for publication column
+  borderRight: `1px solid ${TABLE_BORDER}`, 
+  maxWidth: 200, 
+  overflow: "hidden", 
+  textOverflow: "ellipsis", 
+  whiteSpace: "nowrap", 
+  cursor: isPubNum ? "pointer" : "default",
+  textDecoration: isPubNum ? "underline" : "none"
+}}
                             >
                               {link ? (
                                 <a href={link} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "inherit" }}>
