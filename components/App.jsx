@@ -414,9 +414,31 @@ const Chatbot = ({ dynamicStats, cleanRows, allColumns, mapping, onClose, T }) =
         });
       }
 
+      // Add Geographical Data for AI
+      let geoBreakdown = "";
+      if (dynamicStats?.geoData) {
+        dynamicStats.geoData.forEach(g => {
+          geoBreakdown += `- ${g.country}: ${g.count} patents (including family members)\n`;
+        });
+      }
+
+      // Add Assignee Data for AI
+      let assigneeBreakdown = "";
+      if (dynamicStats?.assigneeData) {
+        dynamicStats.assigneeData.forEach(a => {
+          assigneeBreakdown += `- ${a.name}: ${a.count} patents\n`;
+        });
+      }
+
       const summary = `
         OFFICIAL DATASET STATISTICS (USE THESE EXACT NUMBERS):
         - Total Unique Patents: ${dynamicStats?.total || 0}
+        
+        GEOGRAPHICAL DISTRIBUTION:
+        ${geoBreakdown}
+
+        ASSIGNEE TYPE DISTRIBUTION:
+        ${assigneeBreakdown}
         
         CATEGORY TAG COUNTS (Sum of all sub-categories):
         ${taxonomyBreakdown}
@@ -1004,7 +1026,13 @@ const Dashboard = ({ user }) => {
           </div>
         </aside>
 
-        <main style={{ flex: 1, overflowY: "auto", padding: "28px 32px" }}>
+        <main style={{ 
+          flex: 1, 
+          overflowY: "auto", 
+          padding: "28px 32px",
+          marginRight: showChat ? "420px" : "0",
+          transition: "margin-right 0.3s ease-in-out"
+        }}>
           <div style={{ maxWidth: activeChart === 6 ? "100%" : 900, margin: "0 auto" }}>
             <div
               style={{
