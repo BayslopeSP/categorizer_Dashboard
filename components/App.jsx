@@ -6,7 +6,7 @@ import {
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const PATENT_DATA = {
-  total: 481,
+  total: 480,
   categoryData: [
     { name: "Sensing Modality", count: 642, fill: "#00D4FF" },
     { name: "Tissue / Anatomical Target", count: 406, fill: "#7C3AED" },
@@ -59,23 +59,23 @@ const PATENT_DATA = {
     { year: "2025", count: 90 },
   ],
   geoData: [
-    { country: "China", code: "CN", count: 312, flag: "🇨🇳", fill: "#EF4444" },
-    { country: "PCT / International", code: "WO", count: 102, flag: "🌐", fill: "#6366F1" },
-    { country: "United States", code: "US", count: 86, flag: "🇺🇸", fill: "#3B82F6" },
-    { country: "Europe", code: "EP", count: 34, flag: "🇪🇺", fill: "#10B981" },
-    { country: "Japan", code: "JP", count: 31, flag: "🇯🇵", fill: "#F59E0B" },
-    { country: "India", code: "IN", count: 11, flag: "🇮🇳", fill: "#FF6B35" },
-    { country: "Germany", code: "DE", count: 9, flag: "🇩🇪", fill: "#8B5CF6" },
-    { country: "South Korea", code: "KR", count: 6, flag: "🇰🇷", fill: "#06B6D4" },
-    { country: "France", code: "FR", count: 2, flag: "🇫🇷", fill: "#EC4899" },
+    { country: "China", code: "CN", count: 1854, flag: "🇨🇳", fill: "#EF4444" },
+    { country: "United States", code: "US", count: 942, flag: "🇺🇸", fill: "#3B82F6" },
+    { country: "Europe", code: "EP", count: 456, flag: "🇪🇺", fill: "#10B981" },
+    { country: "Japan", code: "JP", count: 382, flag: "🇯🇵", fill: "#F59E0B" },
+    { country: "PCT / International", code: "WO", count: 215, flag: "🌐", fill: "#6366F1" },
+    { country: "South Korea", code: "KR", count: 148, flag: "🇰🇷", fill: "#06B6D4" },
+    { country: "India", code: "IN", count: 42, flag: "🇮🇳", fill: "#FF6B35" },
+    { country: "Germany", code: "DE", count: 28, flag: "🇩🇪", fill: "#8B5CF6" },
+    { country: "France", code: "FR", count: 12, flag: "🇫🇷", fill: "#EC4899" },
   ],
   assigneeData: [
-    { name: "Chinese MedTech Company", count: 127, fill: "#EF4444" },
-    { name: "MedTech Startup / SME", count: 125, fill: "#00D4FF" },
-    { name: "Research & Academic", count: 74, fill: "#7C3AED" },
-    { name: "Large MedTech Corporation", count: 59, fill: "#F59E0B" },
-    { name: "Hospital / Clinical", count: 36, fill: "#10B981" },
-    { name: "Other", count: 23, fill: "#6B7280" },
+    { name: "Medical and Healthcare", count: 224, fill: "#EF4444" },
+    { name: "Research & Development", count: 118, fill: "#00D4FF" },
+    { name: "University", count: 68, fill: "#7C3AED" },
+    { name: "Hospital / Medical Center", count: 36, fill: "#10B981" },
+    { name: "Others", count: 22, fill: "#6B7280" },
+    { name: "AI-driven healthcare company", count: 12, fill: "#F59E0B" },
   ],
   taxonomyMap: [
     {
@@ -299,7 +299,7 @@ const Chart4_Geography = () => {
 
 const Chart5_Taxonomy = () => (
   <Card>
-    <ChartTitle title="Patent Taxonomy — Categories & Sub-Categories" subtitle="Structural map of the classification framework used across all 481 patents" />
+    <ChartTitle title="Patent Taxonomy — Categories & Sub-Categories" subtitle="Structural map of the classification framework used across all 480 patents" />
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       {PATENT_DATA.taxonomyMap.map((cat, ci) => (
         <div key={ci} style={{ display: "flex", gap: 0, alignItems: "stretch" }}>
@@ -338,7 +338,7 @@ const Chart5_Taxonomy = () => (
     <div style={{ marginTop: 16, padding: "10px 16px", background: "rgba(255,255,255,0.02)", borderRadius: 10, border: `1px solid ${C.border}`, display: "flex", gap: 20, flexWrap: "wrap" }}>
       <span style={{ fontSize: 11, color: C.muted }}>📋 4 top-level categories</span>
       <span style={{ fontSize: 11, color: C.muted }}>🏷️ 31 sub-categories total</span>
-      <span style={{ fontSize: 11, color: C.muted }}>📄 481 patents tagged</span>
+      <span style={{ fontSize: 11, color: C.muted }}>📄 480 patents tagged</span>
     </div>
   </Card>
 );
@@ -854,7 +854,7 @@ const Dashboard = ({ user }) => {
             {/* Stats Boxes */}
             <div style={{ display: "flex", gap: 6 }}>
               {[
-                { v: "481", l: T.patents },
+                { v: "480", l: T.patents },
                 { v: "4", l: T.categories },
                 { v: "9", l: T.geographies },
               ].map((s, i) => (
@@ -1027,7 +1027,7 @@ const Dashboard = ({ user }) => {
                 {activeChart === 6 && (
                   <div style={{ display: "flex", gap: 8 }}>
                     <a 
-                      href="/Bay_IP_BI_Project_Patent_Dataset.xlsx" 
+                      href="/Bay1_IP BI Project_Patent Dataset_Apr 29.xlsx" 
                       download 
                       style={{ 
                         textDecoration: "none",
@@ -1049,8 +1049,11 @@ const Dashboard = ({ user }) => {
                     >
                       <span style={{ fontSize: 14 }}>📊</span> {T.downloadExcel}
                     </a>
-                    <button 
+                    <a 
+                      href="/Bay_IP BUSINESS INTELLIGENCE REPORT_April 29.pptx" 
+                      download 
                       style={{ 
+                        textDecoration: "none",
                         background: "#FFFFFF", 
                         border: `1px solid ${C.border}`, 
                         color: "#991B1B", 
@@ -1066,10 +1069,9 @@ const Dashboard = ({ user }) => {
                       }}
                       onMouseEnter={e => e.currentTarget.style.background = "#FEF2F2"}
                       onMouseLeave={e => e.currentTarget.style.background = "#FFFFFF"}
-                      onClick={() => alert("PPT will be available soon!")}
                     >
                       <span style={{ fontSize: 14 }}>📉</span> {T.downloadPpt}
-                    </button>
+                    </a>
                   </div>
                 )}
                 {activeChart === 6 && (
@@ -1320,7 +1322,7 @@ const Dashboard = ({ user }) => {
 };
 
 // ─── LOGIN ────────────────────────────────────────────────────────────────────
-const CREDS = { admin: "bayslope2026" };
+const CREDS = { Reinhold: "bayslope2026" };
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState("");
@@ -1337,58 +1339,225 @@ const Login = ({ onLogin }) => {
         onLogin(username);
       } else {
         // ✅ FIX: corrected credential hint (was bayslope2024)
-        setError("Invalid credentials. Use: admin / bayslope2026");
+        setError("Invalid credentials. Use: Reinhold / bayslope2026");
         setLoading(false);
       }
     }, 800);
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#F9FAFB", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#F9FAFB",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+        overflow: "hidden",
+        fontFamily: "system-ui, -apple-system, sans-serif",
+      }}
+    >
       <div style={{ width: 400, position: "relative" }}>
         <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <div style={{ width: 64, height: 64, borderRadius: 18, background: "#000000", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, fontWeight: 900, color: "#fff", margin: "0 auto 16px" }}>B</div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: "#111827" }}>Bayslope Technologies</div>
-          <div style={{ fontSize: 12, color: "#6B7280", marginTop: 6, letterSpacing: "1.5px", textTransform: "uppercase" }}>Patent Intelligence Platform</div>
+          <div
+            style={{
+              width: 64,
+              height: 64,
+              borderRadius: 18,
+              background: "#000000",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 28,
+              fontWeight: 900,
+              color: "#fff",
+              margin: "0 auto 16px",
+            }}
+          >
+            B
+          </div>
+          <div style={{ fontSize: 26, fontWeight: 700, color: "#111827" }}>
+            Bayslope Technologies
+          </div>
+          <div
+            style={{
+              fontSize: 12,
+              color: "#6B7280",
+              marginTop: 6,
+              letterSpacing: "1.5px",
+              textTransform: "uppercase",
+            }}
+          >
+            Patent Intelligence Platform
+          </div>
         </div>
 
-        <div style={{ background: "#FFFFFF", border: `1px solid ${C.border}`, borderRadius: 24, padding: 36, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" }}>
-          <div style={{ fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 6 }}>Welcome back</div>
-          <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 28 }}>Sign in to access patent analytics</div>
+        <div
+          style={{
+            background: "#FFFFFF",
+            border: `1px solid ${C.border}`,
+            borderRadius: 24,
+            padding: 36,
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 18,
+              fontWeight: 700,
+              color: "#111827",
+              marginBottom: 6,
+            }}
+          >
+            Welcome back
+          </div>
+          <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 28 }}>
+            Sign in to access patent analytics
+          </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={{ fontSize: 11, color: "#6B7280", letterSpacing: "0.5px", textTransform: "uppercase", display: "block", marginBottom: 8 }}>Username</label>
-            <input value={username} onChange={e => { setUsername(e.target.value); setError(""); }} onKeyDown={e => e.key === "Enter" && handleSubmit()} placeholder="admin"
-              style={{ width: "100%", padding: "13px 16px", borderRadius: 12, boxSizing: "border-box", background: "#F9FAFB", border: `1px solid ${error ? "#EF4444" : C.border}`, color: "#111827", fontSize: 14, outline: "none" }} />
+            <label
+              style={{
+                fontSize: 11,
+                color: "#6B7280",
+                letterSpacing: "0.5px",
+                textTransform: "uppercase",
+                display: "block",
+                marginBottom: 8,
+              }}
+            >
+              Username
+            </label>
+            <input
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setError("");
+              }}
+              onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+              placeholder="Reinhold"
+              style={{
+                width: "100%",
+                padding: "13px 16px",
+                borderRadius: 12,
+                boxSizing: "border-box",
+                background: "#F9FAFB",
+                border: `1px solid ${error ? "#EF4444" : C.border}`,
+                color: "#111827",
+                fontSize: 14,
+                outline: "none",
+              }}
+            />
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <label style={{ fontSize: 11, color: "#6B7280", letterSpacing: "0.5px", textTransform: "uppercase", display: "block", marginBottom: 8 }}>Password</label>
+            <label
+              style={{
+                fontSize: 11,
+                color: "#6B7280",
+                letterSpacing: "0.5px",
+                textTransform: "uppercase",
+                display: "block",
+                marginBottom: 8,
+              }}
+            >
+              Password
+            </label>
             <div style={{ position: "relative" }}>
-              <input type={showPw ? "text" : "password"} value={password} onChange={e => { setPassword(e.target.value); setError(""); }} onKeyDown={e => e.key === "Enter" && handleSubmit()} placeholder="••••••••••"
-                style={{ width: "100%", padding: "13px 44px 13px 16px", borderRadius: 12, boxSizing: "border-box", background: "#F9FAFB", border: `1px solid ${error ? "#EF4444" : C.border}`, color: "#111827", fontSize: 14, outline: "none" }} />
-              <button onClick={() => setShowPw(s => !s)} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#6B7280", cursor: "pointer", fontSize: 14 }}>{showPw ? "🙈" : "👁"}</button>
+              <input
+                type={showPw ? "text" : "password"}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError("");
+                }}
+                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                placeholder="••••••••••"
+                style={{
+                  width: "100%",
+                  padding: "13px 44px 13px 16px",
+                  borderRadius: 12,
+                  boxSizing: "border-box",
+                  background: "#F9FAFB",
+                  border: `1px solid ${error ? "#EF4444" : C.border}`,
+                  color: "#111827",
+                  fontSize: 14,
+                  outline: "none",
+                }}
+              />
+              <button
+                onClick={() => setShowPw((s) => !s)}
+                style={{
+                  position: "absolute",
+                  right: 14,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  color: "#6B7280",
+                  cursor: "pointer",
+                  fontSize: 14,
+                }}
+              >
+                {showPw ? "🙈" : "👁"}
+              </button>
             </div>
           </div>
 
-          {error && <div style={{ marginBottom: 16, padding: "10px 14px", background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 10, fontSize: 12, color: "#B91C1C" }}>{error}</div>}
+          {error && (
+            <div
+              style={{
+                marginBottom: 16,
+                padding: "10px 14px",
+                background: "#FEF2F2",
+                border: "1px solid #FCA5A5",
+                borderRadius: 10,
+                fontSize: 12,
+                color: "#B91C1C",
+              }}
+            >
+              {error}
+            </div>
+          )}
 
-          <button onClick={handleSubmit} disabled={loading}
-            style={{ width: "100%", padding: 14, borderRadius: 14, border: "none", background: loading ? "#9CA3AF" : "#000000", color: "#fff", fontSize: 14, fontWeight: 700, cursor: loading ? "not-allowed" : "pointer" }}>
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            style={{
+              width: "100%",
+              padding: 14,
+              borderRadius: 14,
+              border: "none",
+              background: loading ? "#9CA3AF" : "#000000",
+              color: "#fff",
+              fontSize: 14,
+              fontWeight: 700,
+              cursor: loading ? "not-allowed" : "pointer",
+            }}
+          >
             {loading ? "Authenticating..." : "Sign In →"}
           </button>
 
-          <div style={{ marginTop: 20, padding: 14, background: "#F9FAFB", borderRadius: 12, border: `1px solid ${C.border}` }}>
+          {/* <div style={{ marginTop: 20, padding: 14, background: "#F9FAFB", borderRadius: 12, border: `1px solid ${C.border}` }}>
             <div style={{ fontSize: 11, color: "#6B7280", marginBottom: 6 }}>🔑 Demo credentials</div>
             {Object.entries(CREDS).map(([u, p]) => (
               <div key={u} style={{ fontSize: 11, color: "#6B7280", fontFamily: "monospace" }}>
                 <span style={{ color: "#000000" }}>{u}</span> / {p}
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
 
-        <div style={{ textAlign: "center", marginTop: 24, fontSize: 11, color: "#6B7280" }}>
+        <div
+          style={{
+            textAlign: "center",
+            marginTop: 24,
+            fontSize: 11,
+            color: "#6B7280",
+          }}
+        >
           © 2026 Bayslope Technologies · Patent Intelligence AI
         </div>
       </div>
